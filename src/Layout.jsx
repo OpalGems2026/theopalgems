@@ -11,7 +11,7 @@ const OLDE_NAPLES = {
 };
 
 // One shared phone number for all boutiques.
-const BOUTIQUE_PHONE = '(786) 353-6000';
+const BOUTIQUE_PHONE = '(920) 920-1145';
 
 export default function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
