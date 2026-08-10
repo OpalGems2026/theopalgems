@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { getPublicLocations, getPublicSections } from './lib/publicData';
+import PromoPopup from './components/PromoPopup';
 
 // Shown in the footer "Our Boutiques" list only (not a full boutique with
 // inventory / nav dropdown / location page). Address per opalcollection.com.
@@ -19,31 +20,41 @@ export default function Layout() {
   const [searchQuery, setSearchQuery] = useState('');
   const [locations, setLocations] = useState([]);
   const [reviews, setReviews] = useState(null);
+  const [subscribeName, setSubscribeName] = useState('');
   const [subscribeEmail, setSubscribeEmail] = useState('');
+  const [subscribePhone, setSubscribePhone] = useState('');
   const [subscribeHoneypot, setSubscribeHoneypot] = useState('');
-  const [subscribeStatus, setSubscribeStatus] = useState({ state: 'idle', message: '' });
+  const [subscribeStatus, setSubscribeStatus] = useState({ state: 'idle', message: '', promoCode: '' });
   const navigate = useNavigate();
 
   const handleSubscribe = async (e) => {
     e.preventDefault();
+    const name = subscribeName.trim();
     const email = subscribeEmail.trim();
-    if (!email) return;
-    setSubscribeStatus({ state: 'loading', message: '' });
+    const phone = subscribePhone.trim();
+    if (!name || !email || !phone) return;
+    setSubscribeStatus({ state: 'loading', message: '', promoCode: '' });
     try {
       const res = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, honeypot: subscribeHoneypot }),
+        body: JSON.stringify({ name, email, phone, honeypot: subscribeHoneypot, source: 'website-footer' }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setSubscribeStatus({ state: 'error', message: data.error || 'Something went wrong. Please try again.' });
+        setSubscribeStatus({ state: 'error', message: data.error || 'Something went wrong. Please try again.', promoCode: '' });
         return;
       }
-      setSubscribeStatus({ state: 'success', message: data.message || 'Please check your inbox to confirm.' });
+      setSubscribeStatus({
+        state: 'success',
+        message: data.message || 'Please check your inbox to confirm.',
+        promoCode: data.promoCode || '',
+      });
+      setSubscribeName('');
       setSubscribeEmail('');
+      setSubscribePhone('');
     } catch (err) {
-      setSubscribeStatus({ state: 'error', message: 'Network error. Please try again.' });
+      setSubscribeStatus({ state: 'error', message: 'Network error. Please try again.', promoCode: '' });
     }
   };
 
@@ -218,8 +229,19 @@ export default function Layout() {
               {/* Subscribe Box */}
               <div>
                 <h4>Stay Sparkling</h4>
-                <p className="small" style={{ marginBottom: '12px' }}>Join our exclusive list for new arrivals and special offers.</p>
-                <form style={{ display: 'flex', gap: '8px', position: 'relative' }} onSubmit={handleSubscribe}>
+                <p className="small" style={{ marginBottom: '12px' }}>Join our exclusive list for new arrivals and special offers — and get 10% off your next purchase.</p>
+                <form className="newsletter-form" onSubmit={handleSubscribe}>
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    value={subscribeName}
+                    onChange={(e) => setSubscribeName(e.target.value)}
+                    placeholder="Your name"
+                    autoComplete="name"
+                    disabled={subscribeStatus.state === 'loading'}
+                    className="newsletter-form__input"
+                  />
                   <input
                     type="email"
                     name="email"
@@ -227,50 +249,52 @@ export default function Layout() {
                     value={subscribeEmail}
                     onChange={(e) => setSubscribeEmail(e.target.value)}
                     placeholder="Your email"
+                    autoComplete="email"
                     disabled={subscribeStatus.state === 'loading'}
-                    style={{
-                      flex: 1,
-                      padding: '10px 14px',
-                      border: '1px solid var(--border)',
-                      borderRadius: '50px',
-                      fontSize: '14px',
-                      outline: 'none',
-                      transition: 'border-color 0.2s'
-                    }}
-                    onFocus={(e) => e.target.style.borderColor = 'var(--accent)'}
-                    onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
+                    className="newsletter-form__input"
                   />
+                  <div className="newsletter-form__row">
+                    <input
+                      type="tel"
+                      name="phone"
+                      required
+                      value={subscribePhone}
+                      onChange={(e) => setSubscribePhone(e.target.value)}
+                      placeholder="Your phone"
+                      autoComplete="tel"
+                      disabled={subscribeStatus.state === 'loading'}
+                      className="newsletter-form__input"
+                    />
+                    <button
+                      type="submit"
+                      className="pill primary"
+                      disabled={subscribeStatus.state === 'loading'}
+                      style={{ padding: '10px 20px', fontSize: '14px', whiteSpace: 'nowrap', opacity: subscribeStatus.state === 'loading' ? 0.6 : 1 }}
+                    >
+                      {subscribeStatus.state === 'loading' ? '...' : 'Subscribe'}
+                    </button>
+                  </div>
                   <input
                     type="text"
                     name="website"
                     value={subscribeHoneypot}
                     onChange={(e) => setSubscribeHoneypot(e.target.value)}
-                    style={{
-                      position: 'absolute',
-                      left: '-9999px',
-                      opacity: 0,
-                      height: 0,
-                      width: 0,
-                      zIndex: -1
-                    }}
+                    style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0, zIndex: -1 }}
                     tabIndex={-1}
                     autoComplete="off"
                     aria-hidden="true"
                   />
-                  <button
-                    type="submit"
-                    className="pill primary"
-                    disabled={subscribeStatus.state === 'loading'}
-                    style={{ padding: '10px 20px', fontSize: '14px', opacity: subscribeStatus.state === 'loading' ? 0.6 : 1 }}
-                  >
-                    {subscribeStatus.state === 'loading' ? '...' : 'Subscribe'}
-                  </button>
                 </form>
 
                 {subscribeStatus.state === 'success' && (
-                  <p className="small" style={{ marginTop: '10px', color: 'var(--accent)' }} role="status">
-                    ✓ {subscribeStatus.message}
-                  </p>
+                  <div style={{ marginTop: '10px' }} role="status">
+                    <p className="small" style={{ color: 'var(--accent)', margin: 0 }}>✓ {subscribeStatus.message}</p>
+                    {subscribeStatus.promoCode && (
+                      <p className="small" style={{ marginTop: '6px' }}>
+                        Your 10% code: <strong style={{ letterSpacing: '0.1em' }}>{subscribeStatus.promoCode}</strong>
+                      </p>
+                    )}
+                  </div>
                 )}
                 {subscribeStatus.state === 'error' && (
                   <p className="small" style={{ marginTop: '10px', color: '#c0392b' }} role="alert">
@@ -300,6 +324,8 @@ export default function Layout() {
           </div>
         </div>
       </footer>
+
+      <PromoPopup />
     </>
   );
 }
