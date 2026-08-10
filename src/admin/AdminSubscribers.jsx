@@ -37,7 +37,7 @@ const INTENT_LABELS = {
 };
 
 function downloadCsv(rows) {
-  const header = ['email', 'source', 'confirmed', 'referral_source', 'location_interest', 'purchase_intent', 'survey_completed_at', 'created_at', 'unsubscribed_at'];
+  const header = ['name', 'email', 'phone', 'source', 'confirmed', 'referral_source', 'location_interest', 'purchase_intent', 'survey_completed_at', 'created_at', 'unsubscribed_at'];
   const escape = (v) => {
     if (v == null) return '';
     const s = String(v);
@@ -93,7 +93,11 @@ export default function AdminSubscribers() {
       if (filter === 'confirmed' && (!s.confirmed || s.unsubscribed_at)) return false;
       if (filter === 'pending' && (s.confirmed || s.unsubscribed_at)) return false;
       if (filter === 'unsubscribed' && !s.unsubscribed_at) return false;
-      if (search && !s.email.toLowerCase().includes(search.toLowerCase())) return false;
+      if (search) {
+        const q = search.toLowerCase();
+        const haystack = `${s.email || ''} ${s.name || ''} ${s.phone || ''}`.toLowerCase();
+        if (!haystack.includes(q)) return false;
+      }
       return true;
     });
   }, [subscribers, search, filter]);
@@ -141,7 +145,7 @@ export default function AdminSubscribers() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search email..."
+            placeholder="Search name, email, or phone..."
             style={{ flex: 1, minWidth: 200, padding: '8px 12px', border: '1px solid #ddd', borderRadius: 4 }}
           />
           <div style={{ display: 'flex', gap: 4 }}>
@@ -174,7 +178,9 @@ export default function AdminSubscribers() {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: '#f8f8f8', borderBottom: '1px solid #eee' }}>
+                <th style={{ padding: 12, textAlign: 'left', fontSize: 13 }}>Name</th>
                 <th style={{ padding: 12, textAlign: 'left', fontSize: 13 }}>Email</th>
+                <th style={{ padding: 12, textAlign: 'left', fontSize: 13 }}>Phone</th>
                 <th style={{ padding: 12, textAlign: 'left', fontSize: 13 }}>Status</th>
                 <th style={{ padding: 12, textAlign: 'left', fontSize: 13 }}>Found us via</th>
                 <th style={{ padding: 12, textAlign: 'left', fontSize: 13 }}>Boutique</th>
@@ -187,7 +193,9 @@ export default function AdminSubscribers() {
             <tbody>
               {filtered.map((s) => (
                 <tr key={s.email} style={{ borderBottom: '1px solid #f0f0f0' }}>
+                  <td style={{ padding: 12, fontSize: 14 }}>{s.name || '—'}</td>
                   <td style={{ padding: 12, fontSize: 14 }}>{s.email}</td>
+                  <td style={{ padding: 12, fontSize: 13, color: '#666' }}>{s.phone || '—'}</td>
                   <td style={{ padding: 12 }}>{statusBadge(s)}</td>
                   <td style={{ padding: 12, fontSize: 13, color: '#666' }}>{REFERRAL_LABELS[s.referral_source] || '—'}</td>
                   <td style={{ padding: 12, fontSize: 13, color: '#666' }}>{LOCATION_LABELS[s.location_interest] || '—'}</td>

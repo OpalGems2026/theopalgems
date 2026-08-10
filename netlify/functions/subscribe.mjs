@@ -1,10 +1,11 @@
 // Netlify Function: newsletter subscription
-// POST /api/subscribe { email, turnstileToken }
+// POST /api/subscribe { email, name, phone, honeypot, source }
 // - Verifies Cloudflare Turnstile CAPTCHA
 // - Validates email format + blocks disposable/spam domains
+// - Requires a name and phone number (footer form + 10%-off promo popup)
 // - Rate-limits via Supabase (not in-memory — serverless-safe)
 // - Stores in Supabase `subscribers` table with confirmed=false
-// - Sends confirmation email (double opt-in) via Resend
+// - Sends confirmation email (double opt-in) via Resend, including the promo code
 // - Notifies admin of the new subscriber
 
 import { createClient } from '@supabase/supabase-js';
@@ -17,6 +18,11 @@ const ADMIN_NOTIFICATION_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL; // where 
 const SITE_URL = process.env.SITE_URL || 'https://theopalgems.com';
 const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY;
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://theopalgems.com';
+
+// Welcome offer: the code new subscribers receive for signing up. Configurable
+// via env so the boutique can rotate it without a redeploy.
+const PROMO_CODE = process.env.PROMO_CODE || 'SPARKLE10';
+const PROMO_DISCOUNT = process.env.PROMO_DISCOUNT || '10% off';
 
 // Stricter email regex — requires at least 2-char TLD
 const EMAIL_RE = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z]{2,})+$/;
@@ -94,6 +100,23 @@ function hasSuspiciousPattern(email) {
   return singleCharDots || consecutiveDots;
 }
 
+// Escape user-supplied values before embedding them in HTML emails
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// A phone number is valid if it contains at least 7 digits (covers US +
+// international formats). We store what the visitor typed, trimmed.
+function isValidPhone(phone) {
+  const digits = (phone || '').replace(/\D/g, '');
+  return digits.length >= 7 && digits.length <= 15;
+}
+
 function corsHeaders(origin) {
   // Only allow requests from our own domain (or localhost for dev)
   const allowed = origin === ALLOWED_ORIGIN ||
@@ -142,7 +165,7 @@ async function verifyTurnstile(token, ip) {
 
 // Rate limiting via Supabase — counts recent subscriptions from same IP
 // This works correctly on serverless (no in-memory state needed)
-async function checkRateLimitViaSupabase(supabase, ip) {
+async function checkRateLimitViaSupabase(supabase, ip, sourceTag) {
   if (!supabase || ip === 'unknown') return true; // skip if no DB
 
   try {
@@ -151,7 +174,7 @@ async function checkRateLimitViaSupabase(supabase, ip) {
       .from('subscribers')
       .select('*', { count: 'exact', head: true })
       .gte('created_at', oneHourAgo)
-      .eq('source', `website-footer-${ip}`);
+      .eq('source', sourceTag);
 
     if (error) {
       console.error('Rate limit check error:', error);
@@ -194,7 +217,8 @@ async function sendEmail({ to, subject, html, replyTo }) {
   return res.json();
 }
 
-function confirmationEmailHtml({ confirmUrl, unsubscribeUrl }) {
+function confirmationEmailHtml({ confirmUrl, unsubscribeUrl, name }) {
+  const greeting = name ? `Thank you, ${escapeHtml(name)}, for your interest in Opal Gems.` : 'Thank you for your interest in Opal Gems.';
   return `
     <div style="font-family: Georgia, serif; max-width: 520px; margin: 0 auto; padding: 40px 24px; color: #2a2a2a;">
       <div style="text-align:center; margin-bottom:32px;">
@@ -202,10 +226,15 @@ function confirmationEmailHtml({ confirmUrl, unsubscribeUrl }) {
         <p style="letter-spacing:0.25em; font-size:11px; color:#b4965a; margin:8px 0 0; text-transform:uppercase;">Elevated Diamonds, In Person</p>
       </div>
       <h2 style="font-family: 'Cormorant Garamond', Georgia, serif; font-weight:400; font-size:24px; color:#1a1a1a;">Confirm your subscription</h2>
-      <p style="line-height:1.7; font-size:15px;">Thank you for your interest in Opal Gems. Please click the button below to confirm your email and join our exclusive list.</p>
+      <p style="line-height:1.7; font-size:15px;">${greeting} Please click the button below to confirm your email and join our exclusive list.</p>
       <p style="line-height:1.7; font-size:15px;">You'll be the first to know about new arrivals, private styling events, and special offers at our boutiques inside Florida's premier resorts.</p>
       <div style="text-align:center; margin:32px 0;">
         <a href="${confirmUrl}" style="display:inline-block; padding:14px 32px; background:#b4965a; color:#fff; text-decoration:none; letter-spacing:0.1em; font-size:13px; text-transform:uppercase; border-radius:4px;">Confirm my subscription</a>
+      </div>
+      <div style="margin:24px 0; padding:20px; border:1px dashed #d8c39a; border-radius:6px; text-align:center; background:#fbf8f2;">
+        <p style="margin:0 0 6px; font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:#b4965a;">Your welcome gift</p>
+        <p style="margin:0 0 8px; font-size:15px; color:#2a2a2a;">Enjoy <strong>${escapeHtml(PROMO_DISCOUNT)}</strong> your next purchase in-boutique with code</p>
+        <p style="margin:0; font-family:'Cormorant Garamond', Georgia, serif; font-size:26px; letter-spacing:0.15em; color:#1a1a1a;"><strong>${escapeHtml(PROMO_CODE)}</strong></p>
       </div>
       <p style="line-height:1.7; font-size:13px; color:#888;">If you didn't sign up for this list, you can safely ignore this email. You won't receive any further messages.</p>
       <hr style="border:none; border-top:1px solid #e6e6e6; margin:32px 0;" />
@@ -217,12 +246,14 @@ function confirmationEmailHtml({ confirmUrl, unsubscribeUrl }) {
   `;
 }
 
-function adminNotificationHtml({ email, source, when }) {
+function adminNotificationHtml({ email, name, phone, source, when }) {
   return `
     <div style="font-family: -apple-system, Segoe UI, Roboto, sans-serif; max-width: 520px; margin: 0 auto; padding: 24px; color: #2a2a2a;">
       <h2 style="margin:0 0 12px; color:#1a1a1a;">New subscriber (pending confirmation)</h2>
-      <p style="margin:0 0 8px;"><strong>Email:</strong> ${email}</p>
-      <p style="margin:0 0 8px;"><strong>Source:</strong> ${source || '(unknown)'}</p>
+      <p style="margin:0 0 8px;"><strong>Name:</strong> ${escapeHtml(name || '(not provided)')}</p>
+      <p style="margin:0 0 8px;"><strong>Email:</strong> ${escapeHtml(email)}</p>
+      <p style="margin:0 0 8px;"><strong>Phone:</strong> ${escapeHtml(phone || '(not provided)')}</p>
+      <p style="margin:0 0 8px;"><strong>Source:</strong> ${escapeHtml(source || '(unknown)')}</p>
       <p style="margin:0 0 8px;"><strong>When:</strong> ${when}</p>
       <p style="margin:0 0 8px; color:#888;"><em>This subscriber has not yet confirmed. They will appear as confirmed once they click the link in the confirmation email.</em></p>
       <hr style="border:none; border-top:1px solid #e6e6e6; margin:20px 0;" />
@@ -247,7 +278,13 @@ export default async (req) => {
   }
 
   const email = (payload?.email || '').trim().toLowerCase();
+  const name = (payload?.name || '').trim();
+  const phone = (payload?.phone || '').trim();
   const honeypot = payload?.honeypot || '';
+
+  // Which entry point sent this — used for a human-readable source label.
+  // Restricted to a known set so it can't be used to inject arbitrary values.
+  const channel = payload?.source === 'promo-popup' ? 'promo-popup' : 'website-footer';
 
   // --- SPAM LAYER 1: Honeypot (bots fill hidden fields) ---
   if (honeypot && honeypot.trim() !== '') {
@@ -262,6 +299,14 @@ export default async (req) => {
   // --- SPAM LAYER 3: Email format validation ---
   if (!email || !EMAIL_RE.test(email) || email.length > 254) {
     return json(400, { error: 'Please enter a valid email address.' }, origin);
+  }
+
+  // --- Required fields: name + phone ---
+  if (!name || name.length > 120) {
+    return json(400, { error: 'Please enter your name.' }, origin);
+  }
+  if (!phone || !isValidPhone(phone) || phone.length > 40) {
+    return json(400, { error: 'Please enter a valid phone number.' }, origin);
   }
 
   // --- SPAM LAYER 4: Disposable email domain check ---
@@ -299,20 +344,20 @@ export default async (req) => {
         auth: { persistSession: false },
       });
 
+      // Store the channel + IP in the source field (also used for rate-limiting)
+      const source = `${channel}-${ip}`;
+
       // --- SPAM LAYER 6: Supabase-based rate limiting (serverless-safe) ---
-      const withinLimit = await checkRateLimitViaSupabase(supabase, ip);
+      const withinLimit = await checkRateLimitViaSupabase(supabase, ip, source);
       if (!withinLimit) {
         console.log(`Spam blocked: rate limit exceeded for IP: ${ip}`);
         return json(429, { error: 'Too many requests. Please try again later.' }, origin);
       }
 
-      // Store IP in source field for rate-limiting purposes
-      const source = `website-footer-${ip}`;
-
       // Try to insert with confirmed=false (double opt-in)
       const { data: inserted, error } = await supabase
         .from('subscribers')
-        .insert({ email, source, confirmed: false })
+        .insert({ email, name, phone, source, confirmed: false })
         .select('unsubscribe_token')
         .single();
 
@@ -335,11 +380,14 @@ export default async (req) => {
     }
   }
 
-  // For duplicates: return success silently — NO re-send of any email
+  // For duplicates: return success silently — NO re-send of any email.
+  // Still hand back the promo code so a returning visitor can use it.
   if (isDuplicate) {
     return json(200, {
       ok: true,
       message: "You're already on our list! Check your inbox for a confirmation email.",
+      promoCode: PROMO_CODE,
+      promoDiscount: PROMO_DISCOUNT,
       supabaseStatus,
     }, origin);
   }
@@ -357,7 +405,7 @@ export default async (req) => {
     await sendEmail({
       to: email,
       subject: 'Confirm your subscription to Opal Gems',
-      html: confirmationEmailHtml({ confirmUrl, unsubscribeUrl }),
+      html: confirmationEmailHtml({ confirmUrl, unsubscribeUrl, name }),
     });
   } catch (err) {
     console.error('Confirmation email failed:', err);
@@ -375,7 +423,9 @@ export default async (req) => {
         subject: `New subscriber (pending): ${email}`,
         html: adminNotificationHtml({
           email,
-          source: 'website-footer',
+          name,
+          phone,
+          source: channel,
           when: new Date().toISOString(),
         }),
         replyTo: email,
@@ -388,6 +438,8 @@ export default async (req) => {
   return json(200, {
     ok: true,
     message: 'Please check your inbox and click the confirmation link to complete your subscription.',
+    promoCode: PROMO_CODE,
+    promoDiscount: PROMO_DISCOUNT,
     supabaseStatus,
   }, origin);
 };

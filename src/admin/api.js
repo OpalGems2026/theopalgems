@@ -539,7 +539,7 @@ export async function getSubscribers() {
   const { data } = await adminFetch({
     table: 'subscribers',
     action: 'select',
-    select: 'email, source, confirmed, referral_source, location_interest, purchase_intent, survey_completed_at, created_at, unsubscribed_at',
+    select: 'email, name, phone, source, confirmed, referral_source, location_interest, purchase_intent, survey_completed_at, created_at, unsubscribed_at',
     orderBy: 'created_at:desc',
   });
   return data || [];
