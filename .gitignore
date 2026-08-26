@@ -78,3 +78,13 @@ INVENTORY OPAL GRAND*.xlsx
 /require AI update/
 /require AI update.zip
 EMAIL_HANDOVER_CHECKLIST.md
+
+# Credential files — THIS REPO IS PUBLIC. Never commit secrets.
+# (docs/OPERATIONS_MANUAL.md is safe: it is a registry and contains no secret values.)
+docs/CREDENTIALS*.md
+**/credentials*.md
+**/secrets*.md
+*.key
+*.pem
+.env.*
+!.env.example
