@@ -635,6 +635,10 @@ before adding anything sensitive.
 
 1. Netlify → Deploys: did the build succeed?
 2. Confirm the production branch is `main` and it is linked to `OpalGems2026/theopalgems`.
+   ⚠️ Make sure you are looking at the site in the **`opalgems2026`** team — a stale
+   same-named site exists under the personal `sturainey` team wired to the legacy repo.
+   To check quickly which code is actually live, fetch the home page and look for a known
+   recent string (e.g. `Your phone` in the footer signup form).
 3. Content served from `sections`/`photos` comes from the database, not the build — check
    the admin panel.
 4. Hard-refresh; HTML is set to `must-revalidate`, but assets are cached for a year.
@@ -664,9 +668,11 @@ logs its failures with context.
 
 | # | Item | Notes |
 |---|---|---|
-| 1 | **Verify Netlify is linked to the new repo** | Confirm Netlify builds from `OpalGems2026/theopalgems` with production branch `main`. If it still points at the legacy repo, merges will not deploy. |
-| 2 | **Local `.env` points at an older Supabase project** | The development file references a previous project reference, while production is `avbegqyvtvdmdilgwnif`. Update it so local work reads the right database. |
-| 3 | **Live signup not yet verified end-to-end** | Name/phone capture and the promo popup were verified in the build and browser, but the real send path (function → database → email) needs one live test. |
+| 1 | ✅ **Resolved — production deploys correctly** | Verified 27 Aug 2026: `theopalgems.com` is served by Netlify and carries the latest code (new phone number, name/phone signup fields, promo popup all present in the live build). The production pipeline from `OpalGems2026/theopalgems` is working. |
+| 1b | ⚠️ **A stale duplicate Netlify site exists** | A second, older site also named `theopalgems` sits under the personal team **`sturainey`**, still wired to the legacy `datacendia/theopalgems` repo, last deployed 6 Aug 2026, serving `theopalgems.netlify.app` with **no custom domain**. It does not affect the live site. The local Netlify CLI is linked to **this stale site**, so `netlify deploy` / `netlify env:*` run from this folder would target the wrong project. Delete the stale site, or re-link the CLI to the `opalgems2026` team. |
+| 2 | ✅ **Resolved — local `.env` corrected** | Updated 27 Aug 2026 to `avbegqyvtvdmdilgwnif`; verified the dev server now reads the production database. A timestamped backup of the previous file was kept locally (git-ignored). |
+| 2b | ⚠️ **`SUPABASE_SERVICE_KEY` in local `.env` is still the old project's key** | Not needed for `npm run dev` (functions do not run locally), but `scripts/*.mjs` use it and would hit the **old** database. Replace it with the `service_role` key from the `avbegqyvtvdmdilgwnif` project. Netlify holds its own production copy, which is unaffected. |
+| 3 | **Live signup not yet verified end-to-end** | Name/phone capture and the promo popup are confirmed present in the live build, but the real send path (function → database → email) still needs one live submission to verify. |
 | 4 | **Shared admin password** | Consider per-user accounts for an audit trail and individual revocation. |
 | 5 | **Phone/SMS consent** | Confirm TCPA compliance before any SMS marketing to collected numbers. |
 | 6 | **Uncommitted `public/sitemap.xml` changes** | Regenerated timestamps repeatedly appear as local modifications; consider ignoring or committing deliberately. |
