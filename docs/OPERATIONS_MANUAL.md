@@ -182,6 +182,9 @@ The local `.env` file (git-ignored) holds development values only.
 
 > Anything prefixed `VITE_` is **compiled into the public JavaScript bundle**. Never put
 > a secret behind a `VITE_` prefix.
+>
+> ⚠️ Use the **legacy** `eyJ…` JWT keys, not the newer `sb_publishable_…` / `sb_secret_…`
+> format — see [§8.4 Supabase API key formats](#84-supabase-api-key-formats--important).
 
 ### 4.2 Server-side (Netlify Functions only — all secret)
 
@@ -394,6 +397,50 @@ SQL files in `supabase-migrations/`, applied by hand in the Supabase SQL Editor,
 
 **Migrations are not automatic.** After merging a change that includes a new migration,
 run it in the Supabase SQL Editor or the related feature will fail.
+
+### 8.4 Supabase API key formats — important
+
+Supabase now issues **two generations of API keys**, and this project uses the **legacy**
+generation. Picking the wrong one produces confusing authentication failures.
+
+**Dashboard → Project Settings → API** has two tabs:
+
+| Tab | Keys | Format |
+|---|---|---|
+| *Publishable and secret API keys* (new) | `sb_publishable_…`, `sb_secret_…` | Opaque strings |
+| **Legacy anon, service_role API keys** ← **use this one** | `anon`, `service_role` | JSON Web Tokens, starting `eyJ…` |
+
+**Rules for this project:**
+
+- `VITE_SUPABASE_ANON_KEY` → the legacy **`anon`** JWT (`eyJ…`). This is what production
+  currently serves; it is public by design and is compiled into the browser bundle.
+- `SUPABASE_SERVICE_KEY` → the legacy **`service_role`** JWT (`eyJ…`). Secret. Netlify only.
+- `INVENTORY_SUPABASE_SERVICE_KEY` → the inventory project's **`service_role` JWT**
+  (`eyJ…`). The `sb_secret_…` format has been observed to be **rejected** here.
+
+**How to tell which key you are holding:** a legacy key starts with `eyJ` and is ~200+
+characters; a new-generation key starts with `sb_publishable_` or `sb_secret_`. You can
+decode a legacy key's middle segment (base64) to read its `role` and project `ref` and
+confirm it belongs to the right project.
+
+Do not migrate to the new key format piecemeal. If you ever switch, change the anon and
+service keys together, in Netlify and locally, and redeploy — mixing generations across
+client and server is the usual cause of "invalid API key" errors.
+
+⚠️ **Never paste a `service_role` / `sb_secret_` value into chat, email, a ticket, or this
+repository.** It bypasses all row-level security and grants full read/write over customer
+data. If one is ever exposed, rotate it immediately (see [§3.3](#33-credential-rotation)).
+
+### 8.5 Plan and capacity
+
+The Supabase organisation is currently on the **Free** plan. Two operational consequences
+worth tracking as the subscriber list grows:
+
+- Free projects **pause after an extended period of inactivity**. Unlikely while the site
+  receives regular traffic, but a real risk during a quiet stretch — a paused database
+  takes the signup, warranty and admin features offline until it is resumed.
+- Free-tier **database size and egress limits** apply. Watch these under Billing → Usage;
+  upgrading is the fix well before a limit is reached.
 
 ---
 
