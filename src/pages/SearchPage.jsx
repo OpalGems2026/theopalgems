@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { kiraProducts } from '../data/kiraProducts.js';
-import watches from '../data/watches.js';
+import { useWatches } from '../hooks/useWatches.js';
 import SEO from '../components/SEO';
 
 const categoryLinks = {
@@ -20,31 +20,37 @@ const categoryLabels = {
   watches: 'Watches',
 };
 
-const allProducts = [
-  ...kiraProducts.map((p) => ({
-    id: p.name,
-    name: p.description || p.name,
-    sku: p.name,
-    category: p.category,
-    image: p.link,
-    price: null,
-    brand: null,
-    href: categoryLinks[p.category] || '/category/' + p.category,
-  })),
-  ...watches.map((w) => ({
-    id: w.id,
-    name: w.name,
-    sku: w.id,
-    category: 'watches',
-    image: w.image,
-    price: w.price,
-    brand: w.brand,
-    href: w.url || '/category/watches',
-    external: !!w.url,
-  })),
-];
+// Jewellery is bundled, so this half of the index can be built once at module load.
+const productItems = kiraProducts.map((p) => ({
+  id: p.name,
+  name: p.description || p.name,
+  sku: p.name,
+  category: p.category,
+  image: p.link,
+  price: null,
+  brand: null,
+  href: categoryLinks[p.category] || '/category/' + p.category,
+}));
 
 export default function SearchPage() {
+  // Watches come from Supabase (bundled file as the seed), so the index has to
+  // be rebuilt when the live catalogue arrives.
+  const watches = useWatches();
+  const allProducts = useMemo(() => [
+    ...productItems,
+    ...watches.map((w) => ({
+      id: w.id,
+      name: w.name,
+      sku: w.id,
+      category: 'watches',
+      image: w.image,
+      price: w.price,
+      brand: w.brand,
+      href: w.url || '/category/watches',
+      external: !!w.url,
+    })),
+  ], [watches]);
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [inputValue, setInputValue] = useState(searchParams.get('q') || '');
   const query = searchParams.get('q') || '';
@@ -64,7 +70,7 @@ export default function SearchPage() {
         p.category?.toLowerCase().includes(q) ||
         p.brand?.toLowerCase().includes(q)
     );
-  }, [query]);
+  }, [query, allProducts]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

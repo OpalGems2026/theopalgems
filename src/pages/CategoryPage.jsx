@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import watches from '../data/watches.js';
+import { useWatches } from '../hooks/useWatches.js';
 import { kiraProducts } from '../data/kiraProducts.js';
 import { ProductCard, ProductModal, buildWhatsAppLink } from '../components/ProductModal';
 import SEO from '../components/SEO';
@@ -17,6 +17,7 @@ const PRICE_RANGES = [
 ];
 export default function CategoryPage() {
   const { category } = useParams();
+  const watches = useWatches();
   const [brandFilter, setBrandFilter] = useState('All');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [sortOrder, setSortOrder] = useState('featured');

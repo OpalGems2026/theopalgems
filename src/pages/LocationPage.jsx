@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import watches from '../data/watches.js';
+import { useWatches } from '../hooks/useWatches.js';
 import { kiraProducts } from '../data/kiraProducts.js';
 import { opalSolProducts } from '../data/opalSolProducts.js';
 import { jupiterProducts } from '../data/jupiterProducts.js';
@@ -73,6 +73,7 @@ function featuredProducts(catalog) {
 
 export default function LocationPage() {
   const { locationId, category } = useParams();
+  const watches = useWatches();
   const fallback = locationInfo[locationId] || locationInfo['opal-grand'];
   const [info, setInfo] = useState(fallback);
   const categoryRef = useRef(null);

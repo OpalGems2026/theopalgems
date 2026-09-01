@@ -273,6 +273,21 @@ export default function AdminProducts() {
         </div>
       </div>
 
+      {/* Jewellery is NOT yet published from this table — see the note in
+          src/lib/publicData.js. Watches are; jewellery is not. Until the
+          catalogue below is completed this warning must stay, otherwise a
+          price edited here silently never reaches the website. */}
+      <div className="admin-notice admin-notice--warning" role="status">
+        <strong>These edits do not appear on the public website yet.</strong>{' '}
+        The public jewellery pages still render from the bundled catalogue
+        (<code>src/data/kiraProducts.js</code>, 119 pieces with prices), while this
+        table holds 64 pieces with no prices set. Wiring the site to this table today
+        would drop 55 pieces and remove every jewellery price, so it is deliberately
+        not connected. Watches <em>are</em> live — edits under Watches publish normally.
+        To finish this, complete this catalogue (all pieces, with prices) and then
+        switch the public pages over the same way watches were.
+      </div>
+
       <div className="admin-toolbar">
         <div className="admin-search">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>

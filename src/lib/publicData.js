@@ -85,6 +85,24 @@ export async function getPublicWatches() {
 }
 
 // ── Products by category (public catalog) ──
+//
+// NOT WIRED TO THE PUBLIC SITE — deliberately, as of 2026-09-01.
+//
+// Watches were switched to Supabase (see hooks/useWatches.js) because the
+// `watches` table is a complete, correct mirror of the bundled file: 240 rows,
+// 240 with prices, byte-identical ids/names/prices. Jewellery is not in that
+// state. The `products` table holds 64 rows against 119 in
+// `src/data/kiraProducts.js`, and NONE of the 64 has a price (`price` is empty,
+// `price_num` is 0). It is also a different schema and a different photo set
+// (`/assets/kira/` vs `/assets/kira-black/`).
+//
+// Connecting the public pages to it today would drop 55 pieces and blank every
+// jewellery price, so the pages still read the bundled catalogue and
+// /admin/products carries a banner saying edits there do not publish.
+//
+// To finish the job: complete the `products` table (all pieces, with prices),
+// then follow the watches pattern — a `useProducts()` hook seeded by the
+// bundled file, accepting the live rows only when non-empty.
 export async function getPublicProducts(category) {
   return cached(`products:${category}`, async () => {
     const { data, error } = await supabase
