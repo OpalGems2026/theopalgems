@@ -6,6 +6,7 @@ import { ProductCard, ProductModal, buildWhatsAppLink } from '../components/Prod
 import SEO from '../components/SEO';
 import { getPublicSections, getPublicLocations } from '../lib/publicData';
 import { defaultSections } from '../lib/defaultSiteContent';
+import { formatPrice, priceValue } from '../lib/formatPrice';
 
 const PRICE_RANGES = [
   { key: 'all', label: 'All Prices' },
@@ -14,11 +15,6 @@ const PRICE_RANGES = [
   { key: '4-7', label: '$4,000–$7,000', min: 4000, max: 7000 },
   { key: '7+', label: '$7,000+', min: 7000, max: Infinity },
 ];
-const priceValue = (p) => {
-  const n = Number(String(p.price ?? '').replace(/[^0-9.]/g, ''));
-  return isNaN(n) || n === 0 ? null : n;
-};
-
 export default function CategoryPage() {
   const { category } = useParams();
   const [brandFilter, setBrandFilter] = useState('All');
@@ -62,14 +58,14 @@ export default function CategoryPage() {
   const activeRange = PRICE_RANGES.find((r) => r.key === priceRange) || PRICE_RANGES[0];
   const rangedProducts = filteredKiraProducts.filter((p) => {
     if (activeRange.key === 'all') return true;
-    const v = priceValue(p);
+    const v = priceValue(p.price);
     return v != null && v >= activeRange.min && v < activeRange.max;
   });
   const displayedProducts = sortOrder === 'featured'
     ? rangedProducts
     : [...rangedProducts].sort((a, b) => {
-        const av = priceValue(a) ?? (sortOrder === 'price-asc' ? Infinity : -Infinity);
-        const bv = priceValue(b) ?? (sortOrder === 'price-asc' ? Infinity : -Infinity);
+        const av = priceValue(a.price) ?? (sortOrder === 'price-asc' ? Infinity : -Infinity);
+        const bv = priceValue(b.price) ?? (sortOrder === 'price-asc' ? Infinity : -Infinity);
         return sortOrder === 'price-asc' ? av - bv : bv - av;
       });
 
@@ -129,7 +125,7 @@ export default function CategoryPage() {
                     <p className="watch-card__brand">{watch.brand}</p>
                     <h3 className="watch-card__name">{watch.name}</h3>
                     <p className="watch-card__desc">{watch.description}</p>
-                    <p className="watch-card__price">${Math.floor(Number(String(watch.price).replace(/[^0-9.]/g, ''))).toLocaleString()}</p>
+                    <p className="watch-card__price">{formatPrice(watch.price)}</p>
                     <div className="watch-card__actions" onClick={(e) => e.stopPropagation()}>
                       <Link to="/book" className="pill primary small">Book to View</Link>
                       <a href={buildWhatsAppLink(watch.name)} target="_blank" rel="noopener noreferrer" className="pill whatsapp small">

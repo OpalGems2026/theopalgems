@@ -8,6 +8,7 @@ import { opalGrandProducts } from '../data/opalGrandProducts.js';
 import { ProductCard, ProductModal } from '../components/ProductModal';
 import SEO from '../components/SEO';
 import { getPublicLocations } from '../lib/publicData';
+import { formatPrice } from '../lib/formatPrice';
 
 // Address-based Google Maps embed — works without an API key (the old
 // pre-baked `pb=` embeds used placeholder place-IDs and rendered blank/blue).
@@ -220,7 +221,7 @@ export default function LocationPage() {
                     <p className="watch-card__brand">{watch.brand}</p>
                     <h3 className="watch-card__name">{watch.name}</h3>
                     <p className="watch-card__desc">{watch.description}</p>
-                    <p className="watch-card__price">{watch.price}</p>
+                    <p className="watch-card__price">{formatPrice(watch.price)}</p>
                     <div className="watch-card__actions">
                       <Link to="/book" className="pill primary small">Book to View</Link>
                     </div>
