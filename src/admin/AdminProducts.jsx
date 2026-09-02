@@ -279,13 +279,15 @@ export default function AdminProducts() {
           price edited here silently never reaches the website. */}
       <div className="admin-notice admin-notice--warning" role="status">
         <strong>These edits do not appear on the public website yet.</strong>{' '}
-        The public jewellery pages still render from the bundled catalogue
-        (<code>src/data/kiraProducts.js</code>, 119 pieces with prices), while this
-        table holds 64 pieces with no prices set. Wiring the site to this table today
-        would drop 55 pieces and remove every jewellery price, so it is deliberately
-        not connected. Watches <em>are</em> live — edits under Watches publish normally.
-        To finish this, complete this catalogue (all pieces, with prices) and then
-        switch the public pages over the same way watches were.
+        The public jewellery pages render from the bundled catalogue
+        (<code>src/data/kiraProducts.js</code>, 119 pieces), while this table holds 64.
+        Every piece listed here <em>is</em> on the website and <em>is</em> showing the
+        price you see below — those prices were backfilled from the live catalogue on
+        2&nbsp;Sep&nbsp;2026, so nothing here is unpriced. What is missing is the other
+        55 pieces; until they are added, pointing the site at this table would drop
+        them. Watches <em>are</em> live — edits under Watches publish normally.
+        To finish: add the remaining 55 pieces, then switch the public pages over the
+        same way watches were (see <code>src/hooks/useWatches.js</code>).
       </div>
 
       <div className="admin-toolbar">

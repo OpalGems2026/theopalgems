@@ -90,19 +90,21 @@ export async function getPublicWatches() {
 //
 // Watches were switched to Supabase (see hooks/useWatches.js) because the
 // `watches` table is a complete, correct mirror of the bundled file: 240 rows,
-// 240 with prices, byte-identical ids/names/prices. Jewellery is not in that
-// state. The `products` table holds 64 rows against 119 in
-// `src/data/kiraProducts.js`, and NONE of the 64 has a price (`price` is empty,
-// `price_num` is 0). It is also a different schema and a different photo set
-// (`/assets/kira/` vs `/assets/kira-black/`).
+// 240 with prices, byte-identical ids/names/prices. Jewellery is not there yet.
 //
-// Connecting the public pages to it today would drop 55 pieces and blank every
-// jewellery price, so the pages still read the bundled catalogue and
-// /admin/products carries a banner saying edits there do not publish.
+// The `products` table holds 64 rows against 119 in `src/data/kiraProducts.js`.
+// All 64 are pieces that DO appear on the website, and their prices were
+// backfilled from the bundled catalogue on 2026-09-02 (verified: all 64 match
+// the price the site displays), so the table is no longer half-blank — it is
+// simply incomplete. The 55 missing pieces are the only blocker.
 //
-// To finish the job: complete the `products` table (all pieces, with prices),
-// then follow the watches pattern — a `useProducts()` hook seeded by the
-// bundled file, accepting the live rows only when non-empty.
+// Connecting the public pages today would therefore drop those 55 pieces, so
+// the pages still read the bundled catalogue and /admin/products carries a
+// banner explaining that edits there do not publish.
+//
+// To finish the job: add the remaining 55 pieces to `products`, then follow the
+// watches pattern — a `useProducts()` hook seeded by the bundled file,
+// accepting the live rows only when non-empty.
 export async function getPublicProducts(category) {
   return cached(`products:${category}`, async () => {
     const { data, error } = await supabase
