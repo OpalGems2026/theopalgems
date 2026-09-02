@@ -214,7 +214,12 @@ export default function LocationPage() {
 
             <div className="watch-grid">
               {filteredWatches.map((watch) => (
-                <div key={watch.id} className="watch-card">
+                <div
+                  key={watch.id}
+                  className="watch-card"
+                  onClick={() => setSelectedProduct({ ...watch, description: watch.name, link: watch.image })}
+                  style={{ cursor: 'pointer' }}
+                >
                   <div className="watch-card__image">
                     <img src={watch.image} alt={watch.name} loading="lazy" decoding="async" />
                   </div>
@@ -223,7 +228,8 @@ export default function LocationPage() {
                     <h3 className="watch-card__name">{watch.name}</h3>
                     <p className="watch-card__desc">{watch.description}</p>
                     <p className="watch-card__price">{formatPrice(watch.price)}</p>
-                    <div className="watch-card__actions">
+                    {/* Stop the card's onClick firing when the button inside is used. */}
+                    <div className="watch-card__actions" onClick={(e) => e.stopPropagation()}>
                       <Link to="/book" className="pill primary small">Book to View</Link>
                     </div>
                   </div>
