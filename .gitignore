@@ -88,3 +88,14 @@ docs/CREDENTIALS*.md
 *.pem
 .env.*
 !.env.example
+
+# Generated document build scratch (Word/PDF output)
+/build/
+
+# Credential sheet - filled-in copies must NEVER reach this public repo
+docs/CREDENTIALS*
+docs/*Credential*
+*Credential Sheet*
+
+# Word lock files
+~$*

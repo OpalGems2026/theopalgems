@@ -1,17 +1,21 @@
 # Opal Gems — Operations Manual
 
-Complete reference for the Opal Gems website, admin panel, database, and email
-systems. Written for the business owner and anyone who takes over technical
-operations.
+Everything behind the Opal Gems website: how it's built, where it lives, what happens
+automatically, and what to do when it stops.
 
-**Last updated:** 26 August 2026
+This is the long version. It's built for looking things up, not for reading front to
+back. If you're taking the business over rather than maintaining the code, start with the
+Handover Guide and come back here when it sends you.
+
+**Last updated:** 27 August 2026
 **Live site:** https://theopalgems.com
 
-> **Security note — read first.** This manual deliberately contains **no passwords,
-> API keys, or secret values**. It records *which* accounts exist, *what* each
-> credential controls, and *where* the real value is stored. Actual secrets belong in
-> a password manager and in the Netlify environment-variable panel — never in this
-> repository, which is **public**. See [§3 Accounts & Credentials](#3-accounts--credentials).
+> **On secrets.** There are no passwords or keys anywhere in this document, and there
+> shouldn't be. It records which accounts exist, what each one controls, and where the
+> real value is kept. The values themselves belong in a password manager and in Netlify's
+> environment variables. The code repository is public, so anything committed to it is
+> readable by anyone, permanently, whether or not you delete it later.
+> [§3](#3-accounts--credentials) has the full inventory.
 
 ---
 
@@ -41,8 +45,8 @@ operations.
 ## 1. The business at a glance
 
 Opal Gems sells fine diamond jewellery from boutiques inside Florida resort hotels.
-The positioning is **"Elevated Diamonds, In Person"** — the website is a catalogue and
-appointment-booking tool, **not** an e-commerce store. There is no online checkout;
+The positioning is **"Elevated Diamonds, In Person"**. The website is a catalogue and an
+appointment-booking tool, not an e-commerce store. There is no online checkout;
 every sale completes in a boutique.
 
 ### Boutiques
@@ -58,8 +62,8 @@ every sale completes in a boutique.
 - **WhatsApp concierge:** +1 561-251-9560
 - **Registered business address (email footers):** 10 N Ocean Blvd, Delray Beach, FL 33483
 
-Olde Naples appears in the footer boutique list only — it has no location page, no
-navigation dropdown, and no inventory in the site.
+Olde Naples appears in the footer boutique list and nowhere else. It has no location
+page, no navigation dropdown and no inventory.
 
 ### Product categories
 
@@ -114,7 +118,7 @@ The production branch is **`main`**. Merging to `main` triggers a Netlify build.
 > **How to use this section.** This is a *registry*, not a vault. Store every actual
 > password, key, and recovery code in a password manager (1Password, Bitwarden, etc.)
 > under a shared "Opal Gems" vault. Fill the **Where the secret lives** column with the
-> password-manager entry name. **Do not type secret values into this file** — it is in
+> password-manager entry name. **Do not type secret values into this file.** It lives in
 > a public Git repository.
 
 ### 3.1 Service accounts
@@ -136,9 +140,9 @@ The production branch is **`main`**. Merging to `main` triggers a Netlify build.
 |---|---|---|---|
 | **Website admin panel** | Manage products, photos, subscribers, newsletter, warranties | Single shared password at https://theopalgems.com/admin — set by the `ADMIN_PASSWORD` env var in Netlify. Grants a 24-hour session token. | _password manager entry_ |
 
-⚠️ **Important:** the admin panel uses **one shared password for everyone** — there are
-no individual staff accounts, so there is no audit trail of who changed what, and
-removing one person's access means changing the password for everybody. See
+⚠️ **One shared password, for everyone.** There are no individual staff accounts. Two
+consequences follow: nothing records who changed what, and revoking one person's access
+means changing the password for the whole team at once. See
 [§17 Open items](#17-open-items--known-issues).
 
 ### 3.3 Credential rotation
@@ -184,7 +188,7 @@ The local `.env` file (git-ignored) holds development values only.
 > a secret behind a `VITE_` prefix.
 >
 > ⚠️ Use the **legacy** `eyJ…` JWT keys, not the newer `sb_publishable_…` / `sb_secret_…`
-> format — see [§8.4 Supabase API key formats](#84-supabase-api-key-formats--important).
+> format. See [§8.4 Supabase API key formats](#84-supabase-api-key-formats--important).
 
 ### 4.2 Server-side (Netlify Functions only — all secret)
 
@@ -234,15 +238,16 @@ The local `.env` file (git-ignored) holds development values only.
 
 - **Header:** category navigation with per-boutique dropdowns, search, Book Appointment.
 - **Footer:** boutique addresses, hours, quick links, newsletter signup, WhatsApp contact.
-- **Promo popup:** 10%-off welcome offer — see [§9.4](#94-the-10-off-welcome-popup).
+- **Promo popup:** the 10%-off welcome offer, covered in [§9.4](#94-the-10-off-welcome-popup).
 
 ### 5.3 SEO
 
 `npm run build` runs two extra steps beyond the standard Vite build:
 
-1. **`scripts/generate-sitemap.mjs`** — regenerates `public/sitemap.xml`.
-2. **`scripts/prerender.mjs`** — launches headless Chromium (Playwright) and writes a
-   static HTML snapshot of each route so search engines see real content.
+1. **`scripts/generate-sitemap.mjs`** regenerates `public/sitemap.xml`.
+2. **`scripts/prerender.mjs`** launches headless Chromium via Playwright and writes a
+   static HTML snapshot of every route, so search engines get real content instead of an
+   empty shell.
 
 Structured data (schema.org) lives in `index.html` and per-page via the `SEO` component.
 `public/llms.txt` describes the business for AI crawlers.
@@ -251,10 +256,13 @@ Structured data (schema.org) lives in `index.html` and per-page via the `SEO` co
 
 ## 6. Product catalogue & inventory data
 
-**This is the least obvious part of the system. Read before editing products.**
+If you read one section before touching anything, make it this one. Product data doesn't
+work the way people assume, and the assumption costs hours.
 
-Product grids are **not** driven by the database. They render from **static JavaScript
-files** committed to the repo:
+Despite there being a perfectly good database, and despite the admin panel having screens
+that look like they manage products, **the grids customers actually see are not driven by
+the database at all**. They're rendered from static JavaScript files committed to the
+repository:
 
 | File | Used by | Contents |
 |---|---|---|
@@ -284,8 +292,10 @@ shared catalogue.
 | `/assets/{opal-sol,jupiter,opal-grand}/<SKU>.jpg` | Per-boutique stock photos |
 | `/assets/spin/<category>/<base>.mp4` | 360° spin videos |
 
-Missing images fall back to a placeholder pendant — if many products look like the same
-pendant, their image paths are broken.
+When an image is missing the site substitutes a placeholder, and the placeholder happens
+to be a circular pendant. This produces a memorably confusing symptom: a page of rings
+that are all, inexplicably, the same pendant. Nothing is wrong with the page. Those
+images simply aren't where the code expects them to be.
 
 ### 6.3 Source spreadsheets
 
@@ -295,10 +305,14 @@ Stock originates in three Google Sheets (one per boutique). Export as CSV with:
 https://docs.google.com/spreadsheets/d/<SHEET_ID>/export?format=csv&gid=0
 ```
 
-Known quirks: prices appear in both European (`$1.750,00`) and US (`$1,400`) formats;
-image cells are Google Drive links that frequently say `done` or `SOLD` instead of a URL;
-SKUs overlap between stores; Drive links are unreliable to hotlink, so images are
-downloaded and committed rather than linked live.
+Anyone re-importing this data needs warning about it first. The prices are written
+inconsistently: some European style, where `$1.750,00` means one thousand seven hundred
+and fifty, and some plain US. Read them wrong and you will publish a ring at a
+thousandth of its price. The image column is full of Google Drive links, except where
+somebody has typed `done` or `SOLD` over the link instead. SKUs are reused across the
+three stores, so a SKU alone doesn't identify a piece. And Drive links are too unreliable
+to point the live site at, which is why the images get downloaded and committed to the
+repository rather than hotlinked.
 
 ### 6.4 Adding or changing products
 
@@ -306,15 +320,15 @@ downloaded and committed rather than linked live.
 2. Add images to `public/assets/…`.
 3. Commit and merge to `main`.
 
-There is **no admin screen that edits these grids** — product changes are a code change
-and a deploy.
+No admin screen edits these grids. Every product change is a code change and a deploy,
+which makes routine stock updates a developer job.
 
 ---
 
 ## 7. The admin panel
 
-**URL:** https://theopalgems.com/admin — single shared password (`ADMIN_PASSWORD`).
-Sessions last 24 hours.
+**URL:** https://theopalgems.com/admin. One shared password (`ADMIN_PASSWORD`), and
+sessions last 24 hours.
 
 | Screen | Route | Purpose |
 |---|---|---|
@@ -340,15 +354,19 @@ Every admin database operation goes through **`/api/admin-data`**, which:
 3. Uses the secret service key server-side, so the database itself stays locked down.
 
 This exists because the admin UI previously talked to the database directly using the
-public key — meaning the login gated only the interface, not the data. Details in
-`ADMIN_RLS_LOCKDOWN.md`.
+public key, which meant the login gated the interface and not the data. `ADMIN_RLS_LOCKDOWN.md`
+has the full write-up.
 
 ### 7.2 "Register Customer" link
 
-The footer's *Register Customer* link points to an **external application**
-(`opal-gems.vercel.app/customers`) used by sales staff to record purchases. It is a
-separate system from this website. Customers cannot use it — the customer-facing signup
-is the footer newsletter form.
+The *Register Customer* link in the footer doesn't belong to this website. It points at a
+separate application (`opal-gems.vercel.app/customers`) that sales staff use to record
+purchases, and only they have access.
+
+This reliably confuses people, because it sits in the footer looking exactly like every
+other link, so customers click it and hit a login wall. If someone asks where customers
+sign themselves up, the answer is the newsletter form further along the same footer, not
+this.
 
 ---
 
@@ -424,8 +442,8 @@ decode a legacy key's middle segment (base64) to read its `role` and project `re
 confirm it belongs to the right project.
 
 Do not migrate to the new key format piecemeal. If you ever switch, change the anon and
-service keys together, in Netlify and locally, and redeploy — mixing generations across
-client and server is the usual cause of "invalid API key" errors.
+service keys together, in Netlify and locally, then redeploy. Mixing the two generations
+across client and server is the usual cause of "invalid API key" errors.
 
 ⚠️ **Never paste a `service_role` / `sb_secret_` value into chat, email, a ticket, or this
 repository.** It bypasses all row-level security and grants full read/write over customer
@@ -437,8 +455,8 @@ The Supabase organisation is currently on the **Free** plan. Two operational con
 worth tracking as the subscriber list grows:
 
 - Free projects **pause after an extended period of inactivity**. Unlikely while the site
-  receives regular traffic, but a real risk during a quiet stretch — a paused database
-  takes the signup, warranty and admin features offline until it is resumed.
+  receives regular traffic, but a real risk during a quiet stretch. A paused database takes
+  signup, warranty registration and the admin panel offline until someone resumes it.
 - Free-tier **database size and egress limits** apply. Watch these under Billing → Usage;
   upgrading is the fix well before a limit is reached.
 
@@ -447,7 +465,7 @@ worth tracking as the subscriber list grows:
 ## 9. Email system
 
 All email sends through **Resend** from `hello@theopalgems.com`. Templates are inline
-HTML inside each function — serif typography, `OPAL GEMS` wordmark, gold accent `#b4965a`.
+HTML inside each function: serif typography, the `OPAL GEMS` wordmark, gold accent `#b4965a`.
 
 ### 9.1 Signup flow (double opt-in)
 
@@ -492,7 +510,7 @@ the filter. Duplicate signups never trigger a second email (prevents mail-bombin
 
 `src/components/PromoPopup.jsx`, mounted site-wide on public pages.
 
-- **Triggers:** 12 seconds on the page, **or** 35% scroll depth — whichever comes first.
+- **Triggers:** 12 seconds on the page, or 35% scroll depth, whichever happens first.
 - **Collects:** name, email, phone (all required).
 - **On success:** reveals the promo code with tap-to-copy; the code is also emailed.
 - **Memory:** stored in the visitor's browser (`localStorage` key `og_promo_popup`).
@@ -508,14 +526,14 @@ Confirm compliance before texting offers.
 
 ## 10. Newsletter
 
-Seasonal newsletter on a **biweekly, draft-for-approval** model — nothing sends
-automatically to customers.
+The newsletter is seasonal, goes out roughly every two weeks, and always waits for
+approval. Nothing reaches a customer without someone pressing Send.
 
 1. A scheduled job builds a themed **draft** every other Monday and emails the owner.
 2. Pieces are auto-suggested from the catalogue by season, one per category.
 3. The owner reviews, edits and swaps pieces at `/admin/newsletter`.
 4. "Send test to yourself" verifies rendering.
-5. The owner clicks **Send** — it goes to **confirmed** subscribers only.
+5. The owner clicks **Send**. It reaches confirmed subscribers only.
 
 **Themes:** new-year · valentines · late-winter · spring · mothers-day · early-summer ·
 summer · late-summer · autumn · holiday · new-arrivals
@@ -539,8 +557,8 @@ Staff register a customer's purchase at `/warranty/register`. On submission:
 2. A confirmation email goes to the customer.
 3. A notification goes to `SALES_NOTIFICATION_EMAIL`.
 4. **`syncCustomerToInventory`** upserts the customer (find-or-create by email) into the
-   **inventory app's** Supabase `customers` table — mapping name, phone, email, address,
-   marketing consent, consent timestamp and notes.
+   **inventory app's** Supabase `customers` table, mapping across name, phone, email,
+   address, marketing consent, consent timestamp and notes.
 
 **Failure mode to know:** if `SUPABASE_SERVICE_KEY` is missing, the function enters demo
 mode and **silently skips both writes** while still appearing to succeed. If
@@ -558,8 +576,15 @@ is rejected.
 | `newsletter-build-draft` | `0 14 * * 1` — Mondays 14:00 UTC, gated to every 13+ days (effectively biweekly) | Builds a themed newsletter **draft** and emails the owner. Never sends to customers. |
 | `send-scheduled-survey` | `0 */6 * * *` — every 6 hours | Sends the one-time preference survey to subscribers whose 24-hour window has elapsed. |
 
-Both run as Netlify scheduled functions. The survey job clears `survey_scheduled_at`
-after sending so each subscriber receives it exactly once.
+Both run as Netlify scheduled functions.
+
+The survey job clears `survey_scheduled_at` after a successful send, which is what
+guarantees each subscriber gets it exactly once. That line matters more than it looks.
+Before it was added, the job selected everyone who hadn't responded and sent to them, but
+never marked that it had done so, so every six hours it sent the same survey to the same
+people again. It ran like that for days. If a subscriber ever reports receiving the same
+message repeatedly, this is the shape of bug to look for: a scheduled job that sends
+without recording that it sent.
 
 ---
 
@@ -601,9 +626,9 @@ npm install
 npm run dev          # Vite dev server on http://localhost:5173
 ```
 
-A `.env` file in the project root is **required** — the app reads `VITE_SUPABASE_URL` and
-`VITE_SUPABASE_ANON_KEY` at import time and renders nothing without them
-("supabaseUrl is required"). `.env` is git-ignored, so it does not exist in fresh clones
+A `.env` file in the project root is required. The app reads `VITE_SUPABASE_URL` and
+`VITE_SUPABASE_ANON_KEY` at import time, and without them it renders nothing at all,
+failing with "supabaseUrl is required". `.env` is git-ignored, so it does not exist in fresh clones
 or Git worktrees; copy it from a known-good checkout. A dev server started before the
 file exists must be restarted.
 
@@ -632,12 +657,18 @@ locally. Verify those on a deploy preview or production.
 
 ### What is protected
 
-- Admin data operations run server-side behind a signed token and a table allow-list.
-- The database service key is never exposed to the browser.
-- Signup is defended by eight layers of spam protection.
-- CORS restricts API calls to the production domain (plus localhost for development).
-- Unsubscribe and confirm links use unguessable random tokens.
-- Passwords are compared in constant time, with a delay on failure to slow brute force.
+Admin database operations all run server-side, behind a signed token and a list of tables
+the endpoint is willing to touch. This wasn't always the case. The admin screens used to
+talk to the database directly using the public key, which meant the login gated the
+*interface* and nothing else: anyone who viewed the page source could take that key and
+query the database from outside the site entirely. That's the hole `/api/admin-data`
+closed, and it's why admin changes route through a function instead of going direct.
+
+Beyond that, the service key never reaches the browser, signup runs through eight separate
+spam checks, CORS limits API calls to the production domain plus localhost, confirm and
+unsubscribe links use random tokens that can't be guessed or enumerated, and the admin
+password is compared in constant time with a deliberate delay on failure so it can't be
+brute-forced quickly.
 
 ### What to keep watching
 
@@ -653,8 +684,8 @@ locally. Verify those on a deploy preview or production.
 ### Files that must never be committed
 
 `.env` · `EMAIL_HANDOVER_CHECKLIST.md` · inventory `.xlsx` files · `Whatsapp1/` ·
-`require AI update/` — all currently git-ignored. Verify with `git check-ignore -v <file>`
-before adding anything sensitive.
+`require AI update/`. All are currently git-ignored. Before adding anything sensitive,
+check it with `git check-ignore -v <file>` rather than assuming.
 
 ---
 
@@ -662,32 +693,45 @@ before adding anything sensitive.
 
 ### "I subscribed but never got an email"
 
-1. Admin → Subscribers: are they **Pending** or **Confirmed**?
-2. Pending is normal — they must click the confirmation link. Ask them to check spam.
-3. If the row is missing entirely, they were likely caught by a spam layer (disposable
-   domain, or more than 3 signups from one IP in an hour). Check the function logs in
-   Netlify.
-4. If rows are missing across the board, check `RESEND_API_KEY` and `SUPABASE_SERVICE_KEY`.
+Look them up in Admin → Subscribers first. If they're **Pending**, that's your answer and
+nothing is broken: they never clicked the confirmation link, and it's sitting in their
+spam folder. This accounts for the overwhelming majority of these reports.
+
+If there's no row for them at all, a spam layer caught them. Usually that means a
+disposable email domain, or more than three signups from the same IP inside an hour, which
+real people do occasionally hit when a whole family signs up on the hotel wifi. The
+function logs in Netlify will say which rule fired.
+
+If nobody at all is getting through, stop looking at individuals and check
+`RESEND_API_KEY` and `SUPABASE_SERVICE_KEY`.
 
 ### "Warranty registrations aren't arriving"
 
-1. Check `SUPABASE_SERVICE_KEY` is set in Netlify — if not, the function is in demo mode
-   and silently skips writes.
-2. Confirm `WARRANTY_DEMO_MODE` is not enabled.
-3. For sync failures specifically, verify `INVENTORY_SUPABASE_SERVICE_KEY` is the `eyJ…`
-   JWT key, not `sb_secret_…`.
-4. Read the function log in Netlify → Functions → `warranty-register`.
+Start with `SUPABASE_SERVICE_KEY` in Netlify, because this failure is deceptive. With that
+variable missing the function drops into demo mode, writes nothing to either database,
+logs no error the user can see, and returns a completely ordinary success response. The
+form thanks the customer. Nothing is saved. From the outside everything looks healthy,
+which is why it can run for a while before anyone notices.
+
+Then check `WARRANTY_DEMO_MODE` isn't switched on.
+
+If the registration is saving but not reaching the inventory system, it's usually the key
+format: `INVENTORY_SUPABASE_SERVICE_KEY` has to be the `eyJ…` JWT, and the newer
+`sb_secret_…` style gets rejected without a useful message.
+
+The function log in Netlify → Functions → `warranty-register` will confirm which of these
+it is in about ten seconds.
 
 ### "The site shows old content after a deploy"
 
 1. Netlify → Deploys: did the build succeed?
 2. Confirm the production branch is `main` and it is linked to `OpalGems2026/theopalgems`.
-   ⚠️ Make sure you are looking at the site in the **`opalgems2026`** team — a stale
-   same-named site exists under the personal `sturainey` team wired to the legacy repo.
+   ⚠️ Check which team you are in first. A stale site of the same name sits under the
+   personal `sturainey` team, still wired to the legacy repository.
    To check quickly which code is actually live, fetch the home page and look for a known
    recent string (e.g. `Your phone` in the footer signup form).
-3. Content served from `sections`/`photos` comes from the database, not the build — check
-   the admin panel.
+3. Content served from `sections`/`photos` comes from the database rather than the build,
+   so check the admin panel instead of the deploy.
 4. Hard-refresh; HTML is set to `must-revalidate`, but assets are cached for a year.
 
 ### "A product image is wrong or missing"
