@@ -8,7 +8,8 @@ import { opalGrandProducts } from '../data/opalGrandProducts.js';
 import { ProductCard, ProductModal } from '../components/ProductModal';
 import SEO from '../components/SEO';
 import { getPublicLocations } from '../lib/publicData';
-import { formatPrice } from '../lib/formatPrice';
+import { formatPrice, applyPriceControls } from '../lib/formatPrice';
+import CatalogControls from '../components/CatalogControls';
 
 // Address-based Google Maps embed — works without an API key (the old
 // pre-baked `pb=` embeds used placeholder place-IDs and rendered blank/blue).
@@ -79,6 +80,8 @@ export default function LocationPage() {
   const categoryRef = useRef(null);
   const [brandFilter, setBrandFilter] = useState('All');
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [priceRange, setPriceRange] = useState('all');
+  const [sortOrder, setSortOrder] = useState('featured');
 
   // Live overrides from Admin → Locations. Falls back silently to the
   // hardcoded `locationInfo` if the row is missing or the request fails.
@@ -119,6 +122,9 @@ export default function LocationPage() {
   const gridProducts = category
     ? catalog.filter((p) => p.category === category)
     : (isRealStock ? catalog : featuredProducts(catalog));
+  // Same price band + sort behaviour as the category pages (shared helper, so
+  // the two pages cannot drift apart again).
+  const displayedProducts = applyPriceControls(gridProducts, priceRange, sortOrder);
 
   useEffect(() => {
     if (category && categoryRef.current) {
@@ -248,11 +254,24 @@ export default function LocationPage() {
               <p className="small">{isRealStock && !selectedCategory ? 'Every piece below is currently available to try on at this boutique.' : 'A curated selection available for try-on at this location.'}</p>
             </div>
 
-            <div className="cards grid-4">
-              {gridProducts.map((product) => (
-                <ProductCard key={product.sku || product.name} product={product} onSelect={setSelectedProduct} />
-              ))}
-            </div>
+            <CatalogControls
+              priceRange={priceRange}
+              onPriceRange={setPriceRange}
+              sortOrder={sortOrder}
+              onSortOrder={setSortOrder}
+            />
+
+            {displayedProducts.length === 0 ? (
+              <p className="small" style={{ textAlign: 'center', padding: '48px 0', color: 'var(--color-muted)' }}>
+                No pieces in this price range.
+              </p>
+            ) : (
+              <div className="cards grid-4">
+                {displayedProducts.map((product) => (
+                  <ProductCard key={product.sku || product.name} product={product} onSelect={setSelectedProduct} />
+                ))}
+              </div>
+            )}
           </section>
         )}
 

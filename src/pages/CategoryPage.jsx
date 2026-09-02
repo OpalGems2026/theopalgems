@@ -6,15 +6,9 @@ import { ProductCard, ProductModal, buildWhatsAppLink } from '../components/Prod
 import SEO from '../components/SEO';
 import { getPublicSections, getPublicLocations } from '../lib/publicData';
 import { defaultSections } from '../lib/defaultSiteContent';
-import { formatPrice, priceValue } from '../lib/formatPrice';
+import { formatPrice, PRICE_RANGES, applyPriceControls } from '../lib/formatPrice';
+import CatalogControls from '../components/CatalogControls';
 
-const PRICE_RANGES = [
-  { key: 'all', label: 'All Prices' },
-  { key: 'u2', label: 'Under $2,000', min: 0, max: 2000 },
-  { key: '2-4', label: '$2,000–$4,000', min: 2000, max: 4000 },
-  { key: '4-7', label: '$4,000–$7,000', min: 4000, max: 7000 },
-  { key: '7+', label: '$7,000+', min: 7000, max: Infinity },
-];
 export default function CategoryPage() {
   const { category } = useParams();
   const watches = useWatches();
@@ -56,19 +50,7 @@ export default function CategoryPage() {
   const filteredKiraProducts = kiraProducts.filter(product => product.category === category);
 
   // Price filter + sort (client-side; prerender shows the default "featured / all").
-  const activeRange = PRICE_RANGES.find((r) => r.key === priceRange) || PRICE_RANGES[0];
-  const rangedProducts = filteredKiraProducts.filter((p) => {
-    if (activeRange.key === 'all') return true;
-    const v = priceValue(p.price);
-    return v != null && v >= activeRange.min && v < activeRange.max;
-  });
-  const displayedProducts = sortOrder === 'featured'
-    ? rangedProducts
-    : [...rangedProducts].sort((a, b) => {
-        const av = priceValue(a.price) ?? (sortOrder === 'price-asc' ? Infinity : -Infinity);
-        const bv = priceValue(b.price) ?? (sortOrder === 'price-asc' ? Infinity : -Infinity);
-        return sortOrder === 'price-asc' ? av - bv : bv - av;
-      });
+  const displayedProducts = applyPriceControls(filteredKiraProducts, priceRange, sortOrder);
 
   const waLink = buildWhatsAppLink(info.title);
 
@@ -153,28 +135,12 @@ export default function CategoryPage() {
             </div>
 
             {filteredKiraProducts.length > 0 && (
-              <div className="catalog-controls">
-                <div className="catalog-controls__filters">
-                  {PRICE_RANGES.map((r) => (
-                    <button
-                      key={r.key}
-                      type="button"
-                      className={`pill small ${priceRange === r.key ? 'primary' : 'ghost'}`}
-                      onClick={() => setPriceRange(r.key)}
-                    >
-                      {r.label}
-                    </button>
-                  ))}
-                </div>
-                <label className="catalog-controls__sort">
-                  <span>Sort</span>
-                  <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
-                    <option value="featured">Featured</option>
-                    <option value="price-asc">Price: Low to High</option>
-                    <option value="price-desc">Price: High to Low</option>
-                  </select>
-                </label>
-              </div>
+              <CatalogControls
+                priceRange={priceRange}
+                onPriceRange={setPriceRange}
+                sortOrder={sortOrder}
+                onSortOrder={setSortOrder}
+              />
             )}
 
             {filteredKiraProducts.length === 0 ? (

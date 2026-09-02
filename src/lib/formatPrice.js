@@ -37,4 +37,42 @@ export function priceValue(value) {
   return !Number.isFinite(n) || n === 0 ? null : n;
 }
 
+/**
+ * Shared catalogue price bands. Defined here, not per page — the category and
+ * location pages drifted apart twice by each keeping their own copy of this
+ * kind of logic, so both now import from one place.
+ */
+export const PRICE_RANGES = [
+  { key: 'all', label: 'All Prices' },
+  { key: 'u2', label: 'Under $2,000', min: 0, max: 2000 },
+  { key: '2-4', label: '$2,000–$4,000', min: 2000, max: 4000 },
+  { key: '4-7', label: '$4,000–$7,000', min: 4000, max: 7000 },
+  { key: '7+', label: '$7,000+', min: 7000, max: Infinity },
+];
+
+/**
+ * Apply a price band and a sort order to a list of catalogue items.
+ * Items with no usable price sort last ascending and first descending, so an
+ * unpriced piece never leads the grid.
+ *
+ * @param {Array}  items
+ * @param {string} rangeKey  a PRICE_RANGES key
+ * @param {string} sortOrder 'featured' | 'price-asc' | 'price-desc'
+ */
+export function applyPriceControls(items, rangeKey, sortOrder) {
+  const range = PRICE_RANGES.find((r) => r.key === rangeKey) || PRICE_RANGES[0];
+  const ranged = range.key === 'all'
+    ? items
+    : items.filter((p) => {
+        const v = priceValue(p.price);
+        return v != null && v >= range.min && v < range.max;
+      });
+  if (sortOrder !== 'price-asc' && sortOrder !== 'price-desc') return ranged;
+  return [...ranged].sort((a, b) => {
+    const av = priceValue(a.price) ?? (sortOrder === 'price-asc' ? Infinity : -Infinity);
+    const bv = priceValue(b.price) ?? (sortOrder === 'price-asc' ? Infinity : -Infinity);
+    return sortOrder === 'price-asc' ? av - bv : bv - av;
+  });
+}
+
 export default formatPrice;
