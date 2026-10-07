@@ -219,7 +219,6 @@ export default function Layout() {
               <a href="/#locations" onClick={(e) => handleHashLink(e, 'locations')}>Locations</a>
               <Link to="/lab-vs-natural" onClick={() => window.scrollTo(0, 0)}>Lab vs. Natural</Link>
               <Link to="/faq" onClick={() => window.scrollTo(0, 0)}>FAQ</Link>
-              <a href="https://opal-gems.vercel.app/customers" target="_blank" rel="noopener noreferrer">Register Customer</a>
             </nav>
           </div>
 
