@@ -29,6 +29,36 @@
     Cache-Control = "public, max-age=0, must-revalidate"
 
 [[redirects]]
+from = "/collections/bracelets"
+to = "/category/bracelets"
+status = 301
+force = true
+
+[[redirects]]
+from = "/collections/emerald"
+to = "/category/rings"
+status = 301
+force = true
+
+[[redirects]]
+from = "/collections/wedding-bands"
+to = "/category/rings"
+status = 301
+force = true
+
+[[redirects]]
+from = "/collections/statement-rings"
+to = "/category/rings"
+status = 301
+force = true
+
+[[redirects]]
+from = "/collections/*"
+to = "/"
+status = 301
+force = true
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
