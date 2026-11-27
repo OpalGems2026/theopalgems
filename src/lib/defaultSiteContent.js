@@ -97,7 +97,7 @@ export const defaultSections = {
     title: 'A Little Luxury, Wherever You Stay',
     body:
       'Discover Opal Gems at select Opal Collection destinations. An elevated jewelry experience, thoughtfully curated for your time away.',
-    image: '/assets/home-2026/hotel.jpg',
+    image: '/assets/home-2026/hotel-hd.jpg',
     imageAlt: 'Guest arriving in the lobby of an Opal Collection hotel',
   },
 
