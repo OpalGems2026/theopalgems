@@ -76,22 +76,14 @@ export default function AdminSections() {
       return { ...prev, [block]: parent };
     });
 
-  const setHeroImage = (index, value) =>
-    setSections((prev) => {
-      const hero = { ...(prev.hero || {}) };
-      const images = Array.isArray(hero.images) ? [...hero.images] : [];
-      images[index] = value;
-      hero.images = images;
-      return { ...prev, hero };
-    });
-
   // Tab definitions ─────────────────────────────────────────────────────────
   const tabs = [
     { key: 'hero', label: 'Hero' },
-    { key: 'imageGrid', label: 'Image Grid' },
-    { key: 'crafted', label: 'Crafted' },
-    { key: 'partnership', label: 'Partnership' },
-    { key: 'carousel', label: 'Carousel' },
+    { key: 'imageGrid', label: 'Category Tiles' },
+    { key: 'collage', label: 'Collage' },
+    { key: 'crafted', label: 'Everyday Luxury' },
+    { key: 'partnership', label: 'Hotel Partnership' },
+    { key: 'carousel', label: 'Moving Photos' },
     { key: 'testimonialsHeader', label: 'Testimonials Hdr' },
     { key: 'reviews', label: 'Reviews' },
     { key: 'locationsHeader', label: 'Locations Hdr' },
@@ -136,120 +128,65 @@ export default function AdminSections() {
         <div className="admin-card">
           <h3>Hero Banner</h3>
           <p className="admin-card__hint">
-            The first section visitors see. Eyebrow, title, tagline, two CTA
-            buttons, and a parallax image stack.
+            The first section visitors see: one photo, a headline, a subtitle and one button.
           </p>
           <div className="admin-form">
             <div className="admin-field">
-              <label>Eyebrow</label>
+              <label>Headline</label>
               <input
                 type="text"
-                value={sections.hero?.eyebrow || ''}
-                onChange={(e) => setBlock('hero', { eyebrow: e.target.value })}
+                value={sections.homeHero?.title || ''}
+                onChange={(e) => setBlock('homeHero', { title: e.target.value })}
               />
             </div>
             <div className="admin-field">
-              <label>Title</label>
+              <label>Subtitle</label>
               <input
                 type="text"
-                value={sections.hero?.title || ''}
-                onChange={(e) => setBlock('hero', { title: e.target.value })}
-              />
-            </div>
-            <div className="admin-field">
-              <label>Tagline</label>
-              <input
-                type="text"
-                value={sections.hero?.tagline || ''}
-                onChange={(e) => setBlock('hero', { tagline: e.target.value })}
+                value={sections.homeHero?.subtitle || ''}
+                onChange={(e) => setBlock('homeHero', { subtitle: e.target.value })}
               />
             </div>
             <div className="admin-form__row">
               <div className="admin-field">
-                <label>Primary CTA Text</label>
-                <input
-                  type="text"
-                  value={sections.hero?.ctaText || ''}
-                  onChange={(e) => setBlock('hero', { ctaText: e.target.value })}
-                />
-              </div>
-              <div className="admin-field">
-                <label>Primary CTA URL</label>
-                <input
-                  type="text"
-                  value={sections.hero?.ctaUrl || ''}
-                  onChange={(e) => setBlock('hero', { ctaUrl: e.target.value })}
-                />
-              </div>
+              <label>Button Text</label>
+              <input
+                type="text"
+                value={sections.homeHero?.ctaText || ''}
+                onChange={(e) => setBlock('homeHero', { ctaText: e.target.value })}
+              />
             </div>
-            <div className="admin-form__row">
-              <div className="admin-field">
-                <label>Secondary CTA Text</label>
-                <input
-                  type="text"
-                  value={sections.hero?.secondaryCtaText || ''}
-                  onChange={(e) => setBlock('hero', { secondaryCtaText: e.target.value })}
-                />
-              </div>
-              <div className="admin-field">
-                <label>Secondary CTA URL</label>
-                <input
-                  type="text"
-                  value={sections.hero?.secondaryCtaUrl || ''}
-                  onChange={(e) => setBlock('hero', { secondaryCtaUrl: e.target.value })}
-                />
-              </div>
+            <div className="admin-field">
+              <label>Button Link (e.g. #categories or /book)</label>
+              <input
+                type="text"
+                value={sections.homeHero?.ctaUrl || ''}
+                onChange={(e) => setBlock('homeHero', { ctaUrl: e.target.value })}
+              />
             </div>
-
-            <h4 style={{ marginTop: 24 }}>Background Images (parallax stack)</h4>
-            <p className="admin-card__hint">3 images recommended.</p>
-            {(sections.hero?.images || []).map((img, i) => (
-              <div key={i} className="admin-inline-item">
-                <div className="admin-inline-item__preview">
-                  {img && <img src={img} alt="" />}
-                </div>
-                <div className="admin-inline-item__fields">
-                  <div className="admin-field">
-                    <label>Image #{i + 1} URL</label>
-                    <input
-                      type="text"
-                      value={img}
-                      onChange={(e) => setHeroImage(i, e.target.value)}
-                    />
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  className="admin-btn admin-btn--danger admin-btn--small"
-                  onClick={() =>
-                    setSections((prev) => ({
-                      ...prev,
-                      hero: {
-                        ...prev.hero,
-                        images: (prev.hero?.images || []).filter((_, idx) => idx !== i),
-                      },
-                    }))
-                  }
-                >
-                  Remove
-                </button>
+            </div>
+            <h4 style={{ marginTop: 24 }}>Photo</h4>
+            {sections.homeHero?.image && (
+              <div className="admin-inline-item__preview" style={{ maxWidth: 320 }}>
+                <img src={sections.homeHero.image} alt="" />
               </div>
-            ))}
-            <button
-              type="button"
-              className="admin-btn admin-btn--secondary"
-              onClick={() =>
-                setSections((prev) => ({
-                  ...prev,
-                  hero: {
-                    ...prev.hero,
-                    images: [...(prev.hero?.images || []), ''],
-                  },
-                }))
-              }
-            >
-              + Add Image
-            </button>
+            )}
+            <div className="admin-field">
+              <label>Photo URL</label>
+              <input
+                type="text"
+                value={sections.homeHero?.image || ''}
+                onChange={(e) => setBlock('homeHero', { image: e.target.value })}
+              />
+            </div>
+            <div className="admin-field">
+              <label>Photo description (for screen readers)</label>
+              <input
+                type="text"
+                value={sections.homeHero?.imageAlt || ''}
+                onChange={(e) => setBlock('homeHero', { imageAlt: e.target.value })}
+              />
+            </div>
           </div>
         </div>
       )}
@@ -259,7 +196,7 @@ export default function AdminSections() {
         <div className="admin-card">
           <h3>Image Grid (Categories)</h3>
           <p className="admin-card__hint">
-            Two large images on top, then 5 category tiles linking to /category/&lt;key&gt;.
+            5 category tiles under the hero, linking to /category/&lt;key&gt;. The two top-row images are no longer shown on the homepage.
           </p>
           <div className="admin-form">
             <h4>Top Row</h4>
@@ -368,10 +305,38 @@ export default function AdminSections() {
         </div>
       )}
 
+      {/* ────────────── Collage ────────────── */}
+      {activeTab === 'collage' && (
+        <div className="admin-card">
+          <h3>Photo Collage</h3>
+          <p className="admin-card__hint">Three photos side by side, full width, no text. Shown under the category tiles.</p>
+          <div className="admin-form">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="admin-inline-item">
+                <div className="admin-inline-item__preview">
+                  {sections.collage?.images?.[i]?.src && <img src={sections.collage.images[i].src} alt="" />}
+                </div>
+                <div className="admin-inline-item__fields">
+                  <div className="admin-field">
+                    <label>Photo #{i + 1} URL</label>
+                    <input
+                      type="text"
+                      value={sections.collage?.images?.[i]?.src || ''}
+                      onChange={(e) => setNestedListItem('collage', 'images', i, { src: e.target.value })}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* ────────────── Crafted ────────────── */}
       {activeTab === 'crafted' && (
         <div className="admin-card">
-          <h3>Crafted For Every Occasion</h3>
+          <h3>The Art of Everyday Luxury</h3>
+          <p className="admin-card__hint">Split section: one photo on the left, this text and button on the right.</p>
           <div className="admin-form">
             <div className="admin-field">
               <label>Title</label>
@@ -409,7 +374,7 @@ export default function AdminSections() {
             </div>
             <div className="admin-form__row">
               <div className="admin-field">
-                <label>Left Image URL</label>
+                <label>Photo URL</label>
                 <input
                   type="text"
                   value={sections.crafted?.imageLeft || ''}
@@ -417,7 +382,7 @@ export default function AdminSections() {
                 />
               </div>
               <div className="admin-field">
-                <label>Right Image URL</label>
+                <label>Second photo (not shown since the 2026 redesign)</label>
                 <input
                   type="text"
                   value={sections.crafted?.imageRight || ''}
@@ -432,8 +397,26 @@ export default function AdminSections() {
       {/* ────────────── Partnership ────────────── */}
       {activeTab === 'partnership' && (
         <div className="admin-card">
-          <h3>Partnership Strip</h3>
+          <h3>Hotel Partnership</h3>
+          <p className="admin-card__hint">Lifestyle photo across the page, then the title and text below it.</p>
           <div className="admin-form">
+            <div className="admin-field">
+              <label>Photo URL</label>
+              <input
+                type="text"
+                value={sections.partnership?.image || ''}
+                onChange={(e) => setBlock('partnership', { image: e.target.value })}
+              />
+            </div>
+            <div className="admin-field">
+              <label>Photo description (for screen readers)</label>
+              <input
+                type="text"
+                value={sections.partnership?.imageAlt || ''}
+                onChange={(e) => setBlock('partnership', { imageAlt: e.target.value })}
+              />
+            </div>
+
             <div className="admin-field">
               <label>Eyebrow</label>
               <input
@@ -465,8 +448,8 @@ export default function AdminSections() {
       {/* ────────────── Carousel ────────────── */}
       {activeTab === 'carousel' && (
         <div className="admin-card">
-          <h3>Full-Width Carousel</h3>
-          <p className="admin-card__hint">Marquee strip below the partnership block.</p>
+          <h3>Moving Photo Strip</h3>
+          <p className="admin-card__hint">Photos that scroll continuously below the hotel section. 5 recommended.</p>
           <div className="admin-form">
             {(sections.carousel?.images || []).map((img, i) => (
               <div key={i} className="admin-inline-item">
@@ -537,6 +520,14 @@ export default function AdminSections() {
                 type="text"
                 value={sections.testimonialsHeader?.title || ''}
                 onChange={(e) => setBlock('testimonialsHeader', { title: e.target.value })}
+              />
+            </div>
+            <div className="admin-field">
+              <label>Subtitle</label>
+              <input
+                type="text"
+                value={sections.testimonialsHeader?.subtitle || ''}
+                onChange={(e) => setBlock('testimonialsHeader', { subtitle: e.target.value })}
               />
             </div>
           </div>

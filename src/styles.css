@@ -5612,3 +5612,412 @@ a:hover { color: var(--accent); }
   border-color: #f0d79a;
   color: #6b5322;
 }
+
+/* ==========================================================================
+   HOMEPAGE — 2026-11 editorial redesign (client brief "Website updates")
+   Every rule is scoped to .hp-* so nothing else on the site moves.
+   Reference: OPAL GEMS WEBSITE (2).pdf, pages 1-6.
+   ========================================================================== */
+:root {
+  --hp-display: 'Bodoni Moda', 'Cormorant Garamond', Georgia, serif;
+  --hp-sans: 'Montserrat', 'Inter', system-ui, sans-serif;
+  --hp-ink: #111111;
+  --hp-soft: #f9f9f8;
+  --hp-line: #d9d9d9;
+}
+
+.hp-display {
+  font-family: var(--hp-display);
+  font-style: italic;
+  font-weight: 500;
+  /* Bodoni Moda's optical-size axis would otherwise follow the font size and
+     thin its hairlines to near-invisible at headline sizes (unreadable on the
+     hero). Pin it to the small-text cut, which keeps the strokes solid. */
+  font-optical-sizing: none;
+  font-variation-settings: 'opsz' 11;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.12;
+  color: var(--hp-ink);
+  margin: 0;
+  font-size: clamp(26px, 2.5vw, 44px);
+}
+.hp-lead {
+  font-family: var(--hp-sans);
+  font-size: clamp(14px, 1.05vw, 17px);
+  line-height: 1.55;
+  letter-spacing: 0;
+  color: var(--hp-ink);
+  margin: 10px 0 0;
+}
+.hp-eyebrow {
+  font-family: var(--hp-sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 14px;
+}
+.hp-btn {
+  display: inline-block;
+  margin-top: 22px;
+  padding: 11px 16px;
+  font-family: var(--hp-sans);
+  font-weight: 700;
+  font-size: clamp(14px, 1.15vw, 18px);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  text-decoration: none;
+  line-height: 1.2;
+  transition: background var(--transition), color var(--transition);
+}
+.hp-btn--light { background: #fff; color: var(--hp-ink); }
+.hp-btn--light:hover { background: var(--hp-ink); color: #fff; }
+.hp-btn--dark { background: var(--hp-ink); color: #fff; }
+.hp-btn--dark:hover { background: var(--accent); color: #fff; }
+.hp-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* 1. Hero ---------------------------------------------------------------- */
+.hp-hero {
+  position: relative;
+  height: clamp(440px, 36vw, 720px);
+  overflow: hidden;
+  background: #e9e8e6;
+}
+.hp-hero__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 18%;
+}
+.hp-hero__content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  width: min(44%, 640px);
+  padding-left: clamp(24px, 3.4vw, 64px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.hp-hero__title { font-size: clamp(28px, 2.75vw, 50px); }
+.hp-hero__subtitle {
+  font-family: var(--hp-sans);
+  font-size: clamp(13px, 1.05vw, 17px);
+  color: var(--hp-ink);
+  margin: 6px 0 0;
+  line-height: 1.5;
+}
+
+/* Category tiles --------------------------------------------------------- */
+.hp-cats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  background: #fafafa;
+  border-bottom: 1px solid var(--hp-line);
+}
+.hp-cats__tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  aspect-ratio: 1 / 0.78;
+  padding: 10px 10px 14px;
+  border-right: 1px solid var(--hp-line);
+  text-decoration: none;
+  color: var(--hp-ink);
+  overflow: hidden;
+  background: #fafafa;
+}
+.hp-cats__tile:last-child { border-right: 0; }
+.hp-cats__tile img {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  object-fit: contain;
+  mix-blend-mode: multiply; /* lets the white product backgrounds sit on the tile grey */
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.hp-cats__tile:hover img { transform: scale(1.05); }
+.hp-cats__label {
+  font-family: var(--hp-sans);
+  font-size: clamp(11px, 1vw, 15px);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+
+/* 2. Collage ------------------------------------------------------------- */
+.hp-collage {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  height: min(56.25vw, 92vh);
+}
+.hp-collage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 3. Split --------------------------------------------------------------- */
+.hp-split {
+  display: grid;
+  grid-template-columns: 48fr 52fr;
+  min-height: min(56.25vw, 880px);
+  background: var(--hp-soft);
+}
+.hp-split__media { position: relative; overflow: hidden; }
+.hp-split__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 40%;
+}
+.hp-split__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px clamp(24px, 5vw, 96px);
+}
+.hp-split__copy .hp-btn { margin-top: clamp(28px, 4vw, 64px); }
+
+/* 4. Hotel partnership --------------------------------------------------- */
+.hp-hotel { background: var(--hp-soft); }
+.hp-hotel__media {
+  height: clamp(300px, 44vw, 760px);
+  overflow: hidden;
+}
+.hp-hotel__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 38%;
+  display: block;
+}
+.hp-hotel__copy {
+  text-align: center;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: clamp(32px, 4vw, 56px) 24px clamp(40px, 5vw, 72px);
+}
+
+/* 5a. Photo strip (continuous marquee) ----------------------------------- */
+.hp-strip {
+  overflow: hidden;
+  background: #fff;
+}
+.hp-strip__track {
+  display: flex;
+  width: max-content;
+  animation: hp-strip-scroll 45s linear infinite;
+}
+.hp-strip:hover .hp-strip__track { animation-play-state: paused; }
+.hp-strip__item {
+  flex: 0 0 auto;
+  width: 20vw;
+  height: 29.5vw;
+  margin-right: 4px; /* margin, not gap: keeps the -50% loop point exact */
+  overflow: hidden;
+}
+.hp-strip__item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+@keyframes hp-strip-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hp-strip { overflow-x: auto; }
+  .hp-strip__track { animation: none; }
+}
+
+/* 5b. Reviews ------------------------------------------------------------ */
+.hp-reviews {
+  background: var(--hp-soft);
+  padding: clamp(40px, 4vw, 64px) 24px clamp(48px, 5vw, 80px);
+  text-align: center;
+}
+.hp-reviews__header { max-width: 760px; margin: 0 auto clamp(28px, 3vw, 44px); }
+.hp-slider {
+  max-width: 780px;
+  margin: 0 auto;
+  background: var(--bg-2);
+  padding: clamp(22px, 2.4vw, 36px) clamp(20px, 3vw, 48px) 22px;
+}
+.hp-slider__stage { display: grid; }
+.hp-slider__slide {
+  grid-area: 1 / 1;
+  margin: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.9s ease, visibility 0s linear 0.9s;
+}
+.hp-slider__slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.9s ease, visibility 0s;
+}
+.hp-slider__stars {
+  color: var(--accent);
+  letter-spacing: 0.18em;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+.hp-slider__quote {
+  margin: 0 0 16px;
+  font-family: var(--hp-sans);
+  font-style: italic;
+  font-size: clamp(15px, 1.35vw, 20px);
+  line-height: 1.5;
+  color: var(--hp-ink);
+}
+.hp-slider__author {
+  display: block;
+  font-family: var(--hp-sans);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--hp-ink);
+}
+.hp-slider__location {
+  display: block;
+  font-family: var(--hp-sans);
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.hp-slider__dots { display: flex; justify-content: center; gap: 6px; margin-top: 18px; }
+.hp-slider__dot {
+  width: 10px;
+  height: 3px;
+  padding: 0;
+  border: 0;
+  background: #d8cfc4;
+  cursor: pointer;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+.hp-slider__dot.is-active { width: 22px; background: var(--accent); }
+.hp-slider__dot:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* 6. Locations ----------------------------------------------------------- */
+.hp-locations__header { text-align: center; max-width: 760px; margin: 0 auto 48px; }
+.hp-locations .locations-grid { grid-template-columns: repeat(4, 1fr); gap: 24px; }
+
+/* Responsive ------------------------------------------------------------- */
+@media (max-width: 1200px) {
+  .hp-locations .locations-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 860px) {
+  .hp-hero { height: auto; display: flex; flex-direction: column; background: var(--hp-soft); }
+  .hp-hero__img { position: static; height: 92vw; object-position: 74% 12%; }
+  .hp-hero__content { width: 100%; padding: 28px 16px 32px; }
+
+  .hp-cats {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 38vw;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .hp-cats__tile { scroll-snap-align: start; }
+
+  .hp-collage { grid-template-columns: 1fr 1fr; height: auto; }
+  .hp-collage img:nth-child(2) { grid-column: 1 / -1; order: -1; height: 120vw; }
+  .hp-collage img:not(:nth-child(2)) { height: 62vw; }
+
+  .hp-split { grid-template-columns: 1fr; min-height: 0; }
+  .hp-split__media { height: 110vw; }
+  .hp-split__copy { padding: 36px 16px 44px; }
+
+  .hp-strip__item { width: 46vw; height: 66vw; }
+  .hp-strip__track { animation-duration: 38s; }
+}
+@media (max-width: 720px) {
+  .hp-locations .locations-grid { grid-template-columns: 1fr; }
+}
+
+/* ==========================================================================
+   Kira studio photos (2026-11): white-background, multi-angle product shots.
+   Applies only to cards/modals whose product has a `gallery`.
+   ========================================================================== */
+.inventory-card--studio .card__media { background: #fff; position: relative; }
+.card__media--swap .card__media-alt {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  pointer-events: none;
+}
+.category-page .inventory-card .card__media .card__media-alt {
+  object-fit: contain;
+  padding: 8px;
+}
+@media (hover: hover) {
+  .card__media--swap:hover .card__media-alt { opacity: 1; }
+}
+
+.product-modal__image--studio { background: #fff; }
+
+.product-modal__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--text);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 0 0 2px;
+}
+.product-modal__nav:hover { background: #fff; border-color: var(--accent); }
+.product-modal__nav:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.product-modal__nav--prev { left: 10px; }
+.product-modal__nav--next { right: 10px; }
+
+.product-modal__thumbs {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding-bottom: 2px;
+}
+.product-modal__thumb {
+  flex: 0 0 64px;
+  height: 64px;
+  padding: 0;
+  border: 1px solid var(--border);
+  background: #fff;
+  cursor: pointer;
+  scroll-snap-align: start;
+  opacity: 0.7;
+  transition: opacity 0.2s ease, border-color 0.2s ease;
+}
+.product-modal__thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.product-modal__thumb:hover { opacity: 1; }
+.product-modal__thumb.is-active { opacity: 1; border-color: var(--accent); }
+.product-modal__thumb:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Kira photos load an 1800px copy when zoomed, so they can take a deeper zoom. */
+.product-modal__image--studio .product-modal__zoomimg.is-zoomed { transform: scale(2.6); }

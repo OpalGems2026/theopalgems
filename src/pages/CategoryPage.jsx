@@ -23,6 +23,7 @@ export default function CategoryPage() {
     { key: 'opal-grand', name: 'Opal Grand', city: 'Delray Beach, Florida', description: 'Beachfront boutique inside Opal Grand Resort. Same-day try-ons after check-in.', image: '/assets/hotels/opal-grand.PNG' },
     { key: 'opal-sol', name: 'Opal Sol', city: 'Clearwater Beach, Florida', description: 'A sister boutique within the Opal Collection portfolio.', image: '/assets/hotels/opal-sol.PNG' },
     { key: 'jupiter-beach', name: 'Jupiter Beach Resort & Spa', city: 'Jupiter, Florida', description: 'Steps from the sand with spa-adjacent showcases and relaxed fittings.', image: '/assets/hotels/jupiter-beach.PNG' },
+    { key: 'olde-naples-hotel', name: 'Olde Naples Hotel', city: 'Naples, Florida', description: 'Inside the Olde Naples Hotel, in the heart of Old Naples.', image: '/assets/home-2026/olde-naples.jpg' },
   ]);
 
   useEffect(() => {
@@ -58,7 +59,7 @@ export default function CategoryPage() {
     <div className="page category-page">
       <SEO
         title={`${info.title} — Fine Diamond Jewelry`}
-        description={`${info.description} Visit Opal Gems boutiques in Delray Beach, Clearwater Beach, and Jupiter, Florida to see the full ${info.title.toLowerCase()} collection in person.`}
+        description={`${info.description} Visit Opal Gems boutiques in Delray Beach, Clearwater Beach, Jupiter, and Naples, Florida to see the full ${info.title.toLowerCase()} collection in person.`}
         path={`/category/${category}`}
         image={info.image}
         breadcrumbs={[

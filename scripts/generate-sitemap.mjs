@@ -45,6 +45,7 @@ const ROUTES = [
   { path: '/location/opal-grand',        priority: '0.9', changefreq: 'monthly' },
   { path: '/location/opal-sol',          priority: '0.9', changefreq: 'monthly' },
   { path: '/location/jupiter-beach',     priority: '0.9', changefreq: 'monthly' },
+  { path: '/location/olde-naples-hotel', priority: '0.9', changefreq: 'monthly' },
 
   // Legal
   { path: '/privacy',                    priority: '0.3', changefreq: 'yearly' },

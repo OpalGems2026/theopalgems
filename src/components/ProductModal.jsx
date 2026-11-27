@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import SpinViewer from './SpinViewer';
 import { formatPrice } from '../lib/formatPrice';
+import { zoomSrcFor } from '../data/kiraGallery';
 
 export const WHATSAPP_NUMBER = '+15612519560';
 
@@ -29,20 +30,35 @@ const FALLBACK_IMG = '/assets/placeholder-dark.jpg';
  * Shared product card used by category and location grids. Click opens the
  * modal (which shows the photo first, with a 360° option when available).
  */
+/** Photos for a product: Kira's multi-angle gallery when present, else its single image. */
+export function productPhotos(product) {
+  if (!product) return [];
+  if (Array.isArray(product.gallery) && product.gallery.length) return product.gallery;
+  const one = product.image || product.link;
+  return one ? [one] : [];
+}
+
 export function ProductCard({ product, onSelect }) {
+  const photos = productPhotos(product);
+  const hasGallery = Array.isArray(product.gallery) && product.gallery.length > 0;
+  const hover = hasGallery && photos.length > 1 ? photos[1] : null;
   return (
     <div
-      className="card inventory-card"
+      className={`card inventory-card${hasGallery ? ' inventory-card--studio' : ''}`}
       style={{ cursor: 'pointer' }}
       onClick={() => onSelect(product)}
     >
-      <div className="card__media">
+      <div className={`card__media${hover ? ' card__media--swap' : ''}`}>
         <img
-          src={product.image || product.link}
+          src={photos[0] || FALLBACK_IMG}
           alt={product.description || product.name}
           loading="lazy"
           onError={(e) => { e.currentTarget.src = FALLBACK_IMG; }}
         />
+        {hover && (
+          // Second angle, revealed on hover (desktop). Decorative: same piece.
+          <img className="card__media-alt" src={hover} alt="" aria-hidden="true" loading="lazy" />
+        )}
         {product.spin && <span className="card__spin-badge">360°</span>}
       </div>
       <div className="card__content" style={{ minHeight: '150px', display: 'flex', flexDirection: 'column', padding: '12px' }}>
@@ -72,15 +88,33 @@ export function ProductCard({ product, onSelect }) {
 export function ProductModal({ product, onClose }) {
   const [zoomed, setZoomed] = useState(false);
   const [view, setView] = useState('photo'); // 'photo' | 'spin'
+  const [shot, setShot] = useState(0);       // which gallery photo is showing
+  const [touchX, setTouchX] = useState(null);
+
+  const photos = productPhotos(product);
+  const count = photos.length;
+  const go = (delta) => { setZoomed(false); setShot((i) => (i + delta + count) % count); };
+  // Kira photos have an 1800px copy for zooming. Warm it up as soon as a photo is
+  // shown, so clicking to zoom swaps straight to the sharp version.
+  const zoomSrc = zoomSrcFor(photos[shot]);
+  useEffect(() => {
+    if (!zoomSrc) return;
+    const pre = new Image();
+    pre.src = zoomSrc;
+  }, [zoomSrc]);
 
   useEffect(() => {
-    const handleKey = (e) => { if (e.key === 'Escape') onClose(); };
+    const handleKey = (e) => {
+      if (e.key === 'Escape') onClose();
+      if (count > 1 && e.key === 'ArrowRight') go(1);
+      if (count > 1 && e.key === 'ArrowLeft') go(-1);
+    };
     document.addEventListener('keydown', handleKey);
     return () => document.removeEventListener('keydown', handleKey);
-  }, [onClose]);
+  }, [onClose, count]);
 
-  // Always open on the (higher-quality) photo, unzoomed, for each product.
-  useEffect(() => { setView('photo'); setZoomed(false); }, [product]);
+  // Always open on the first photo, unzoomed, for each product.
+  useEffect(() => { setView('photo'); setZoomed(false); setShot(0); }, [product]);
 
   if (!product) return null;
 
@@ -101,17 +135,27 @@ export function ProductModal({ product, onClose }) {
         <button className="close" onClick={onClose} aria-label="Close">×</button>
         <div className="product-modal__layout">
           <div className="product-modal__media">
-            <div className="product-modal__image">
+            <div
+              className={`product-modal__image${product.gallery ? ' product-modal__image--studio' : ''}`}
+              onTouchStart={(e) => setTouchX(e.touches[0].clientX)}
+              onTouchEnd={(e) => {
+                if (touchX == null || zoomed || count < 2) return;
+                const dx = e.changedTouches[0].clientX - touchX;
+                if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+                setTouchX(null);
+              }}
+            >
               {showSpin ? (
                 <SpinViewer
                   src={product.spin}
-                  poster={product.image || product.link}
+                  poster={photos[0]}
                   alt={product.description || product.name}
                 />
               ) : (
                 <img
-                  src={product.image || product.link}
-                  alt={product.description || product.name}
+                  key={photos[shot]}
+                  src={(zoomed && zoomSrc) || photos[shot] || FALLBACK_IMG}
+                  alt={`${product.description || product.name}${count > 1 ? ` — view ${shot + 1} of ${count}` : ''}`}
                   className={`product-modal__zoomimg${zoomed ? ' is-zoomed' : ''}`}
                   style={{ cursor: zoomed ? 'zoom-out' : 'zoom-in' }}
                   onClick={() => setZoomed((z) => !z)}
@@ -119,12 +163,36 @@ export function ProductModal({ product, onClose }) {
                   onError={(e) => { e.currentTarget.src = FALLBACK_IMG; }}
                 />
               )}
+              {!showSpin && count > 1 && (
+                <>
+                  <button type="button" className="product-modal__nav product-modal__nav--prev" onClick={() => go(-1)} aria-label="Previous photo">‹</button>
+                  <button type="button" className="product-modal__nav product-modal__nav--next" onClick={() => go(1)} aria-label="Next photo">›</button>
+                </>
+              )}
               {!showSpin && (
                 <span className="product-modal__zoomhint" aria-hidden="true">
                   {zoomed ? 'Click to zoom out' : '⚲ Click to zoom'}
                 </span>
               )}
             </div>
+
+            {!showSpin && count > 1 && (
+              <div className="product-modal__thumbs" role="tablist" aria-label="Photos">
+                {photos.map((src, i) => (
+                  <button
+                    key={src}
+                    type="button"
+                    role="tab"
+                    aria-selected={i === shot}
+                    aria-label={`View ${i + 1} of ${count}`}
+                    className={`product-modal__thumb${i === shot ? ' is-active' : ''}`}
+                    onClick={() => { setZoomed(false); setShot(i); }}
+                  >
+                    <img src={src} alt="" loading="lazy" />
+                  </button>
+                ))}
+              </div>
+            )}
 
             {product.spin && (
               <div className="product-modal__viewtoggle" role="group" aria-label="View">

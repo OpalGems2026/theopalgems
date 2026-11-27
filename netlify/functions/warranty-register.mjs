@@ -38,7 +38,7 @@ const INVENTORY_CUSTOMERS_TABLE = process.env.INVENTORY_CUSTOMERS_TABLE || 'cust
 const EMAIL_RE = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z]{2,})+$/;
 
 // Tight allowlist for the store_location enum (free text fallback still allowed but trimmed)
-const KNOWN_LOCATIONS = new Set(['opal-grand', 'opal-sol', 'jupiter-beach', 'other']);
+const KNOWN_LOCATIONS = new Set(['opal-grand', 'opal-sol', 'jupiter-beach', 'olde-naples-hotel', 'other']);
 const KNOWN_CATEGORIES = new Set([
   'Ring', 'Rings', 'Necklace', 'Necklaces', 'Earring', 'Earrings',
   'Bracelet', 'Bracelets', 'Pendant', 'Bangle', 'Chain', 'Watch', 'Other',
@@ -62,13 +62,14 @@ const KNOWN_STYLES = new Set([
   'classic', 'modern', 'vintage', 'statement', 'minimalist', 'bohemian',
 ]);
 const KNOWN_HOTELS = new Set([
-  'opal-grand', 'opal-sol', 'jupiter-beach', 'other',
+  'opal-grand', 'opal-sol', 'jupiter-beach', 'olde-naples-hotel', 'other',
 ]);
 
 const LOCATION_LABELS = {
   'opal-grand':    'Opal Grand — Delray Beach, FL',
   'opal-sol':      'Opal Sol — Clearwater Beach, FL',
   'jupiter-beach': 'Jupiter Beach Resort & Spa — Jupiter, FL',
+  'olde-naples-hotel': 'Olde Naples Hotel — Naples, FL',
 };
 
 function corsHeaders(origin) {

@@ -39,11 +39,34 @@ function mapLocationRow(l) {
   };
 }
 
+// Olde Naples Hotel — the fourth boutique. Shown everywhere boutiques are
+// listed (homepage cards, header dropdown, footer, /location/olde-naples-hotel)
+// even before an Admin → Locations row exists. Once a row with this key is
+// saved in the `locations` table, that row wins and this is ignored.
+// Address matches the inventory app's `shops` record and opalcollection.com.
+export const OLDE_NAPLES_FALLBACK = {
+  key: 'olde-naples-hotel',
+  name: 'Olde Naples Hotel',
+  city: 'Naples, Florida',
+  address: '200 Broad Avenue South, Naples, FL 34102',
+  description: 'Inside the Olde Naples Hotel, in the heart of Old Naples.',
+  long_description:
+    'Our Olde Naples boutique brings the Opal Gems experience to the historic heart of Naples. Stop in during your stay for a relaxed, one-on-one look at our collection.',
+  hours: '',
+  phone: '(920) 920-1145', // the shared all-boutiques number already in the site footer
+  hotel_image: '/assets/home-2026/olde-naples.jpg',
+  map_url: 'https://www.google.com/maps/search/?api=1&query=200+Broad+Ave+S+Naples+FL+34102',
+  map_embed: '',
+  status: 'active',
+};
+
 export async function getPublicLocations() {
   return cached('locations', async () => {
     const { data, error } = await supabase.from('locations').select('*');
     if (error) throw error;
-    return (data || []).map(mapLocationRow);
+    const rows = data || [];
+    if (!rows.some((r) => r.key === OLDE_NAPLES_FALLBACK.key)) rows.push(OLDE_NAPLES_FALLBACK);
+    return rows.map(mapLocationRow);
   });
 }
 
