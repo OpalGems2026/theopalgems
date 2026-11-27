@@ -26,6 +26,7 @@ const LOCATION_LABELS = {
   'opal-grand': 'Opal Grand',
   'opal-sol': 'Opal Sol',
   'jupiter-beach': 'Jupiter Beach',
+  'olde-naples-hotel': 'Olde Naples',
   'multiple': 'Multiple',
   'undecided': 'Undecided',
 };

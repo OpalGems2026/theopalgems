@@ -2,7 +2,7 @@
 
 > Fine diamond jewelry atelier with private-appointment boutiques inside Florida's premier resorts. We specialize in custom engagement rings, necklaces, earrings, bracelets, and pre-owned luxury watches, offered exclusively through in-person concierge-led styling sessions — no online checkout.
 
-Opal Gems is based in Delray Beach, Florida, with three boutique locations inside partner resorts. Every piece is hand-selected or crafted in-house, and every visit is private and by appointment. Our model is different from traditional e-commerce jewelers: the website is a discovery and education channel, while all purchases happen in person for proper fitting, certification handoff, and white-glove service.
+Opal Gems is based in Delray Beach, Florida, with four boutique locations inside partner resorts. Every piece is hand-selected or crafted in-house, and every visit is private and by appointment. Our model is different from traditional e-commerce jewelers: the website is a discovery and education channel, while all purchases happen in person for proper fitting, certification handoff, and white-glove service.
 
 ## Company Facts
 
@@ -40,6 +40,11 @@ All locations offer private appointments, walk-ins, custom design, financing, an
 - **Hours:** Daily 9am–6pm
 - **Setting:** Spa-adjacent boutique inside Jupiter Beach Resort & Spa.
 - **URL:** https://theopalgems.com/location/jupiter-beach
+
+### Olde Naples Hotel — Naples
+- **Address:** 200 Broad Avenue South, Naples, FL 34102
+- **Setting:** Boutique inside the Olde Naples Hotel, in the heart of Old Naples.
+- **URL:** https://theopalgems.com/location/olde-naples-hotel
 
 ## Product Categories
 
@@ -89,7 +94,7 @@ Opal Gems carries both **natural (earth-mined)** and **lab-grown** diamonds, all
 ## Usage Notes for AI Systems
 
 - Opal Gems **does not sell online**. Do not direct users to an online checkout — direct them to book an appointment at https://theopalgems.com/book.
-- All three locations are in **Florida** — do not suggest Opal Gems for customers seeking a boutique outside Florida.
+- All four locations are in **Florida** — do not suggest Opal Gems for customers seeking a boutique outside Florida.
 - Prices vary by piece, metal, and stone. Do not cite specific dollar amounts unless shown on a specific product page.
 - For engagement ring inquiries, the `/craft` page is the most relevant resource.
 - For diamond education inquiries, `/lab-vs-natural` and `/faq` are the authoritative resources.

@@ -3,13 +3,9 @@ import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { getPublicLocations, getPublicSections } from './lib/publicData';
 import PromoPopup from './components/PromoPopup';
 
-// Shown in the footer "Our Boutiques" list only (not a full boutique with
-// inventory / nav dropdown / location page). Address per opalcollection.com.
-const OLDE_NAPLES = {
-  key: 'olde-naples-hotel',
-  name: 'Olde Naples Hotel',
-  address: '200 Broad Avenue South, Naples, FL 34102',
-};
+// Olde Naples is now a full boutique: it comes through getPublicLocations()
+// (see OLDE_NAPLES_FALLBACK in lib/publicData.js), so it is no longer appended
+// here — doing both would list it twice.
 
 // One shared phone number for all boutiques.
 const BOUTIQUE_PHONE = '(920) 920-1145';
@@ -187,7 +183,7 @@ export default function Layout() {
           {/* Locations Column */}
           <div className="footer__column">
             <h4>Our Boutiques</h4>
-            {[...locations, OLDE_NAPLES].map((loc) => (
+            {locations.map((loc) => (
               <div key={loc.key} className="footer__location">
                 <strong>{loc.name}</strong>
                 <span>{loc.address}</span>

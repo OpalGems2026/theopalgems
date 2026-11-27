@@ -50,7 +50,21 @@ const locationInfo = {
     phone: '(561) 786-2751',
     mapUrl: 'https://www.google.com/maps/search/?api=1&query=5+N+A1A+Jupiter+FL+33477',
     mapEmbed: mapEmbedFor('5 N A1A, Jupiter, FL 33477'),
-  }
+  },
+  // Without this entry /location/olde-naples-hotel fell back to Opal Grand's
+  // hours, phone and map. Hours are not known yet, so they are left blank and
+  // the Hours block is hidden; the phone is the shared all-boutiques number.
+  'olde-naples-hotel': {
+    name: 'Olde Naples Hotel',
+    city: 'Naples, Florida',
+    address: '200 Broad Avenue South, Naples, FL 34102',
+    description: 'Inside the Olde Naples Hotel, in the heart of Old Naples.',
+    longDescription: 'Our Olde Naples boutique brings the Opal Gems experience to the historic heart of Naples. Stop in during your stay for a relaxed, one-on-one look at our collection.',
+    hours: '',
+    phone: '(920) 920-1145',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=200+Broad+Ave+S+Naples+FL+34102',
+    mapEmbed: mapEmbedFor('200 Broad Ave S, Naples, FL 34102'),
+  },
 };
 
 // Clean black-background representative images for the "Explore all
@@ -144,14 +158,14 @@ export default function LocationPage() {
     telephone: info.phone,
     priceRange: '$$$',
     address: { '@type': 'PostalAddress', streetAddress: info.address.split(',')[0], addressLocality: info.city.split(',')[0], addressRegion: 'FL', addressCountry: 'US' },
-    openingHours: info.hours,
+    ...(info.hours ? { openingHours: info.hours } : {}),
   };
 
   return (
     <div className="page">
       <SEO
         title={`${info.name} Boutique${selectedCategory ? ` — ${selectedCategory.name}` : ''} — ${info.city}`}
-        description={`${info.longDescription} Located at ${info.address}. ${info.hours}. Call ${info.phone} to book a styling appointment.`}
+        description={`${info.longDescription} Located at ${info.address}.${info.hours ? ` ${info.hours}.` : ''} Call ${info.phone} to book a styling appointment.`}
         path={locPath}
         breadcrumbs={[
           { name: 'Home', path: '/' },
@@ -286,10 +300,12 @@ export default function LocationPage() {
                   <h4>Address</h4>
                   <p>{info.address}</p>
                 </div>
-                <div>
-                  <h4>Hours</h4>
-                  <p>{info.hours}</p>
-                </div>
+                {info.hours && (
+                  <div>
+                    <h4>Hours</h4>
+                    <p>{info.hours}</p>
+                  </div>
+                )}
                 <div>
                   <h4>Phone</h4>
                   <p><a href={`tel:${info.phone.replace(/[^0-9]/g, '')}`}>{info.phone}</a></p>

@@ -44,6 +44,7 @@ const ROUTES = [
   '/location/opal-grand',
   '/location/opal-sol',
   '/location/jupiter-beach',
+  '/location/olde-naples-hotel',
 ];
 
 const MIME = {

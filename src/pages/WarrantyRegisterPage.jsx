@@ -9,6 +9,7 @@ const LOCATION_OPTIONS = [
   { value: 'opal-grand',    label: 'Opal Grand — Delray Beach, FL' },
   { value: 'opal-sol',      label: 'Opal Sol — Clearwater Beach, FL' },
   { value: 'jupiter-beach', label: 'Jupiter Beach Resort & Spa — Jupiter, FL' },
+  { value: 'olde-naples-hotel', label: 'Olde Naples Hotel — Naples, FL' },
   { value: 'other',         label: 'Other / event' },
 ];
 
@@ -49,6 +50,7 @@ const HOTEL_OPTIONS = [
   { value: 'opal-grand',    label: 'Opal Grand Resort'           },
   { value: 'opal-sol',      label: 'Opal Sol Resort'             },
   { value: 'jupiter-beach', label: 'Jupiter Beach Resort & Spa'  },
+  { value: 'olde-naples-hotel', label: 'Olde Naples Hotel'         },
   { value: 'other',         label: 'A different hotel'           },
 ];
 

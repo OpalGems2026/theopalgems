@@ -6,6 +6,7 @@ const LOCATION_OPTIONS = [
   { value: 'opal-grand',    label: 'Opal Grand — Delray Beach' },
   { value: 'opal-sol',      label: 'Opal Sol — Clearwater Beach' },
   { value: 'jupiter-beach', label: 'Jupiter Beach Resort & Spa' },
+  { value: 'olde-naples-hotel', label: 'Olde Naples Hotel' },
   { value: 'other',         label: 'Other / event' },
 ];
 
@@ -13,6 +14,7 @@ const LOCATION_LABELS = {
   'opal-grand':    'Opal Grand',
   'opal-sol':      'Opal Sol',
   'jupiter-beach': 'Jupiter Beach',
+  'olde-naples-hotel': 'Olde Naples',
   'other':         'Other',
 };
 
@@ -816,6 +818,7 @@ export default function AdminWarranties() {
                 <option value="opal-grand">Opal Grand</option>
                 <option value="opal-sol">Opal Sol</option>
                 <option value="jupiter-beach">Jupiter Beach</option>
+                <option value="olde-naples-hotel">Olde Naples</option>
                 <option value="other">Other</option>
               </select>
               <div style={{ display: 'flex', gap: 4 }}>

@@ -384,6 +384,99 @@ function ContactModal({ isOpen, onClose }) {
   );
 }
 
+/**
+ * Continuous, seamless horizontal photo strip.
+ * The image list is rendered twice inside one track and the track slides left
+ * by exactly half its width, so the second copy lands where the first began and
+ * the loop has no visible jump. Pure CSS animation (see .hp-strip in styles.css);
+ * it pauses on hover and stops for visitors who ask for reduced motion.
+ */
+function PhotoStrip({ images }) {
+  if (!images.length) return null;
+  const loop = [...images, ...images];
+  return (
+    <section className="hp-strip" aria-label="Photoshoot gallery">
+      <div className="hp-strip__track">
+        {loop.map((img, idx) => (
+          <div className="hp-strip__item" key={idx} aria-hidden={idx >= images.length ? 'true' : undefined}>
+            <img src={img.src} alt={idx >= images.length ? '' : img.alt || ''} loading="lazy" decoding="async" />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+const REVIEW_INTERVAL_MS = 6000;
+
+/**
+ * One review at a time, cross-fading to the next every few seconds.
+ * Pauses while hovered or focused so nobody loses a review mid-read; the dots
+ * jump straight to a review. Reduced-motion visitors get no auto-advance.
+ */
+function TestimonialSlider({ testimonials }) {
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const count = testimonials.length;
+
+  useEffect(() => {
+    if (count < 2 || paused) return undefined;
+    const reduce = typeof window !== 'undefined'
+      && window.matchMedia
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return undefined;
+    const id = setInterval(() => setActive((i) => (i + 1) % count), REVIEW_INTERVAL_MS);
+    return () => clearInterval(id);
+  }, [count, paused]);
+
+  // Keep the index valid if the list shrinks after the live data loads.
+  useEffect(() => { if (active >= count) setActive(0); }, [active, count]);
+
+  if (!count) return null;
+
+  return (
+    <div
+      className="hp-slider"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
+    >
+      <div className="hp-slider__stage" aria-live="polite">
+        {testimonials.map((t, idx) => (
+          <figure
+            key={idx}
+            className={`hp-slider__slide${idx === active ? ' is-active' : ''}`}
+            aria-hidden={idx === active ? undefined : 'true'}
+          >
+            <div className="hp-slider__stars" aria-label="5 out of 5 stars">★★★★★</div>
+            <blockquote className="hp-slider__quote">“{t.quote}”</blockquote>
+            <figcaption>
+              <span className="hp-slider__author">{t.author}</span>
+              {t.location && <span className="hp-slider__location">{t.location}</span>}
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+      {count > 1 && (
+        <div className="hp-slider__dots" role="tablist" aria-label="Choose a review">
+          {testimonials.map((t, idx) => (
+            <button
+              key={idx}
+              type="button"
+              role="tab"
+              aria-selected={idx === active}
+              aria-label={`Review ${idx + 1} of ${count}`}
+              className={`hp-slider__dot${idx === active ? ' is-active' : ''}`}
+              onClick={() => setActive(idx)}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function App() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -399,7 +492,6 @@ export default function App() {
   // paint has copy/images before the Supabase round-trip resolves.
   const [sections, setSections] = useState(() => mergeSections({}));
   const [showcasePhotos, setShowcasePhotos] = useState([]);
-  const heroRef = useRef(null);
 
   useScrollReveal();
 
@@ -429,29 +521,10 @@ export default function App() {
     return () => { clearTimeout(fadeTimer); clearTimeout(removeTimer); };
   }, []);
 
-  // Parallax effect on hero
-  useEffect(() => {
-    const handleScroll = () => {
-      if (heroRef.current) {
-        const imgs = heroRef.current.querySelectorAll('.hero-banner__image img');
-        const scrollY = window.scrollY;
-        const offset = scrollY * 0.35;
-        // Scale all three images uniformly. The middle image used to get
-        // scale(0.85) here, which made it shrink out of line with the sides
-        // on scroll (and stay stuck smaller when scrolled back to the top).
-        imgs.forEach((img) => {
-          img.style.transform = `scale(1.15) translateY(${offset}px)`;
-        });
-      }
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   // Derived UI state from sections (always populated thanks to mergeSections).
-  const heroImages = sections.hero?.images?.length
-    ? sections.hero.images
-    : [sections.hero?.image || '/assets/opal-lobby.jpg'];
+  // The old parallax hero (sections.hero) was replaced by sections.homeHero in
+  // the 2026-11 redesign — a single editorial photo, no scroll effect.
+  const hero = sections.homeHero || {};
   const testimonials = (sections.testimonials || []).map((t) => ({
     quote: t.text || t.quote || '',
     author: t.name || t.author || '',
@@ -590,123 +663,91 @@ export default function App() {
         </div>
       )}
 
-      {/* Hero Banner with Parallax */}
-      <section className="hero-banner hero-banner--parallax" ref={heroRef}>
-        <div className="hero-banner__image">
-          <div className="hero-banner__images">
-            {heroImages.map((img, idx) => (
-              <img
-                key={idx}
-                src={img}
-                alt="Opal Gems boutique experience"
-                className="hero-banner__multi-image"
-                loading="eager"
-                fetchpriority={idx === 0 ? 'high' : 'auto'}
-                decoding="async"
-              />
-            ))}
-          </div>
-        </div>
-        <div className="hero-banner__overlay">
-          <div className="hero-banner__content">
-            <p className="hero-banner__eyebrow">{sections.hero?.eyebrow}</p>
-            <h1 className="hero-banner__title">{sections.hero?.title}</h1>
-            <p className="hero-banner__tagline">{sections.hero?.tagline}</p>
-            <div className="hero-banner__actions">
-              {sections.hero?.ctaText && (
-                <a className="pill primary" href={sections.hero?.ctaUrl || '#categories'}>{sections.hero.ctaText}</a>
-              )}
-              {sections.hero?.secondaryCtaText && (
-                <a className="pill ghost" href={sections.hero?.secondaryCtaUrl || '#locations'}>{sections.hero.secondaryCtaText}</a>
-              )}
-            </div>
-          </div>
+      {/* 1. Hero — single editorial photo, copy on the left */}
+      <section className="hp-hero" aria-label="Opal Gems">
+        <img
+          className="hp-hero__img"
+          src={hero.image}
+          alt={hero.imageAlt || ''}
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+        <div className="hp-hero__content">
+          <h1 className="hp-display hp-hero__title">{hero.title}</h1>
+          {hero.subtitle && <p className="hp-hero__subtitle">{hero.subtitle}</p>}
+          {hero.ctaText && (
+            <a className="hp-btn hp-btn--light" href={hero.ctaUrl || '#categories'}>{hero.ctaText}</a>
+          )}
         </div>
       </section>
 
-      {/* Image Grid Section */}
-      <section className="image-grid-section" id="categories">
-        <div className="image-grid">
-          {/* Top row */}
-          <div className="image-grid__top">
-            <img src={sections.imageGrid?.topLeft?.src} alt={sections.imageGrid?.topLeft?.alt || ''} className="image-grid__item image-grid__item--large" loading="lazy" decoding="async" />
-            <img src={sections.imageGrid?.topRight?.src} alt={sections.imageGrid?.topRight?.alt || ''} className="image-grid__item image-grid__item--large" loading="lazy" decoding="async" />
-          </div>
-          {/* Bottom row - Category Selection */}
-          <div className="image-grid__bottom">
-            {(sections.imageGrid?.bottom || []).map((tile) => (
-              <Link key={tile.key} to={`/category/${tile.key}`} className="image-grid__item-wrapper">
-                <img src={tile.image} alt={tile.label} className="image-grid__item" loading="lazy" decoding="async" />
-                <span className="image-grid__label">{tile.label}</span>
-              </Link>
-            ))}
-          </div>
+      {/* Category tiles, directly under the hero */}
+      <section className="hp-cats" id="categories" aria-label="Shop by category">
+        {(sections.imageGrid?.bottom || []).map((tile) => (
+          <Link key={tile.key} to={`/category/${tile.key}`} className="hp-cats__tile">
+            <img src={tile.image} alt="" loading="lazy" decoding="async" />
+            <span className="hp-cats__label">{tile.label}</span>
+          </Link>
+        ))}
+      </section>
+
+      {/* 2. Editorial collage — purely visual, edge to edge */}
+      <section className="hp-collage" aria-label="Photoshoot">
+        {(sections.collage?.images || []).map((img, idx) => (
+          <img key={idx} src={img.src} alt={img.alt || ''} loading="lazy" decoding="async" />
+        ))}
+      </section>
+
+      {/* 3. Split: image | copy (admin key: `crafted`) */}
+      <section className="hp-split reveal">
+        <div className="hp-split__media">
+          <img src={sections.crafted?.imageLeft} alt="Hands wearing stacked Opal Gems diamond rings" loading="lazy" decoding="async" />
+        </div>
+        <div className="hp-split__copy">
+          <h2 className="hp-display">{sections.crafted?.title}</h2>
+          {sections.crafted?.subtitle && <p className="hp-lead">{sections.crafted.subtitle}</p>}
+          {sections.crafted?.ctaText && (
+            <a className="hp-btn hp-btn--dark" href={sections.crafted?.ctaUrl || '#categories'}>
+              {sections.crafted.ctaText}
+            </a>
+          )}
         </div>
       </section>
 
-      {/* Crafted for Every Occasion - Multi-Image Gallery */}
-      <section className="reveal">
-        <div className="crafted-section crafted-section--simple">
-          <div className="crafted-image-wrapper">
-            <img src={sections.crafted?.imageLeft} alt="Jewelry showcase" className="crafted-image" loading="lazy" decoding="async" />
-            <img src={sections.crafted?.imageRight} alt="Diamond pieces" className="crafted-image" loading="lazy" decoding="async" />
+      {/* 4. Hotel partnership — lifestyle image, then copy (admin key: `partnership`) */}
+      <section className="hp-hotel reveal" id="partnership">
+        {sections.partnership?.image && (
+          <div className="hp-hotel__media">
+            <img src={sections.partnership.image} alt={sections.partnership?.imageAlt || ''} loading="lazy" decoding="async" />
           </div>
-          <div className="crafted-content-wrapper">
-            <div className="crafted-content">
-              <h2 className="crafted-title">{sections.crafted?.title}</h2>
-              <p className="crafted-subtitle">{sections.crafted?.subtitle}</p>
-              {sections.crafted?.ctaText && (
-                <Link to={sections.crafted?.ctaUrl || '/category/rings'} className="pill primary crafted-cta">
-                  {sections.crafted.ctaText}
-                </Link>
-              )}
-            </div>
-          </div>
+        )}
+        <div className="hp-hotel__copy">
+          {sections.partnership?.eyebrow && <p className="hp-eyebrow">{sections.partnership.eyebrow}</p>}
+          <h2 className="hp-display">{sections.partnership?.title}</h2>
+          <p className="hp-lead">{sections.partnership?.body}</p>
         </div>
       </section>
 
-      
-      <main className="container">
-        {/* Partnership */}
-        <section className="section reveal" id="partnership">
-          <div className="section__header" style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto 48px' }}>
-            <p className="eyebrow">{sections.partnership?.eyebrow}</p>
-            <h2 className="shimmer-text">{sections.partnership?.title}</h2>
-            <p>{sections.partnership?.body}</p>
-          </div>
-        </section>
+      {/* 5a. Continuous auto-scrolling photo strip (admin key: `carousel`) */}
+      <PhotoStrip images={sections.carousel?.images || []} />
 
-        {/* Full-Width Carousel */}
-        <section className="full-width-carousel">
-          <div className="carousel-track">
-            {(sections.carousel?.images || []).map((img, idx) => (
-              <img key={idx} src={img.src} alt={img.alt || ''} loading="lazy" decoding="async" />
-            ))}
-          </div>
-        </section>
+      {/* 5b. Testimonials — one at a time, auto-rotating */}
+      <section className="hp-reviews reveal" id="testimonials">
+        <div className="hp-reviews__header">
+          {sections.testimonialsHeader?.eyebrow && <p className="hp-eyebrow">{sections.testimonialsHeader.eyebrow}</p>}
+          <h2 className="hp-display">{sections.testimonialsHeader?.title}</h2>
+          {sections.testimonialsHeader?.subtitle && <p className="hp-lead">{sections.testimonialsHeader.subtitle}</p>}
+        </div>
+        <TestimonialSlider testimonials={testimonials} />
+      </section>
 
-        {/* Testimonials */}
-        <section className="section section--panel reveal" id="testimonials">
-          <div className="section__header" style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto 48px' }}>
-            <p className="eyebrow">{sections.testimonialsHeader?.eyebrow}</p>
-            <h2>{sections.testimonialsHeader?.title}</h2>
-          </div>
-          <div className="testimonials-grid stagger-children">
-            {testimonials.map((t, idx) => (
-              <div key={idx} className="testimonial-card">
-                <p className="testimonial-quote">"{t.quote}"</p>
-                <p className="testimonial-author">{t.author}</p>
-                <p className="testimonial-location">{t.location}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="section reveal" id="locations">
-          <div className="section__header" style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto 48px' }}>
-            <p className="eyebrow">{sections.locationsHeader?.eyebrow}</p>
-            <h2>{sections.locationsHeader?.title}</h2>
-            <p className="small">{sections.locationsHeader?.subtitle}</p>
+      <main className="container hp-main">
+        <section className="section reveal hp-locations" id="locations">
+          <div className="hp-locations__header">
+            {sections.locationsHeader?.eyebrow && <p className="hp-eyebrow">{sections.locationsHeader.eyebrow}</p>}
+            <h2 className="hp-display">{sections.locationsHeader?.title}</h2>
+            <p className="hp-lead">{sections.locationsHeader?.subtitle}</p>
           </div>
           <div className="locations-grid" id="locations-grid">
             {locations.map((loc) => (

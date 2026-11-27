@@ -29,7 +29,7 @@ export default function BookingPage() {
     <div className="page booking-page">
       <SEO
         title="Book Your Visit"
-        description="Book a private styling appointment at any Opal Gems boutique in Delray Beach, Clearwater Beach, or Jupiter, Florida. 30–60 minute one-on-one concierge session with complimentary champagne."
+        description="Book a private styling appointment at any Opal Gems boutique in Delray Beach, Clearwater Beach, Jupiter, or Naples, Florida. 30–60 minute one-on-one concierge session with complimentary champagne."
         path="/book"
         breadcrumbs={[
           { name: 'Home', path: '/' },
@@ -76,7 +76,7 @@ export default function BookingPage() {
                 </li>
                 <li>
                   <span className="booking-page__benefit-icon">◈</span>
-                  <span>Available at all 3 Florida boutiques</span>
+                  <span>Available at all 4 Florida boutiques</span>
                 </li>
               </ul>
               <p className="small" style={{ color: 'var(--muted)', marginTop: '24px' }}>
