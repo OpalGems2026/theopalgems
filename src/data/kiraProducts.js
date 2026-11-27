@@ -1,23 +1,28 @@
-export const kiraProducts = [
+import { kiraGallery } from './kiraGallery.js';
+
+const rawKiraProducts = [
   {
     name: "KJ00061P.MX-3-21",
     link: "/assets/kira-black/KJ00061P.MX-3-21.jpg",
     description: "Circle Multi Shape Pendant",
-    category: "necklaces",
+    category: "necklaces"
+,
     price: 2375,
   },
   {
     name: "KJ00066P.RD-1-21",
     link: "/assets/kira-black/KJ00066P.RD-1-21.jpg",
     description: "Classic Solitaire Pendant",
-    category: "necklaces",
+    category: "necklaces"
+,
     price: 1400,
   },
   {
     name: "KJ00075N.CE-1-21",
     link: "/assets/kira-black/KJ00075N.CE-1-21.jpg",
     description: "Cushion Pendant",
-    category: "necklaces",
+    category: "necklaces"
+,
     price: 1400,
   },
   {
@@ -25,14 +30,16 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00075N.CE-1-22.jpg",
     gold: "Yellow Gold",
     description: "Cushion Pendant",
-    category: "necklaces",
+    category: "necklaces"
+,
     price: 1400,
   },
   {
     name: "KJ00075N.PS-1-21",
     link: "/assets/kira-black/KJ00075N.PS-1-21.jpg",
     description: "Pear Shape Pendant",
-    category: "necklaces",
+    category: "necklaces"
+,
     price: 2220,
   },
   {
@@ -40,7 +47,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00075N.PS-1-22.jpg",
     gold: "Yellow Gold",
     description: "Pear Shape Pendant",
-    category: "necklaces",
+    category: "necklaces"
+,
     price: 2220,
   },
   {
@@ -48,7 +56,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00075N.PS-2-21.jpg",
     gold: "White Gold",
     description: "Pear Shape Pendant",
-    category: "necklaces",
+    category: "necklaces"
+,
     price: 2000,
   },
   {
@@ -56,7 +65,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00075N.PS-2-22.jpg",
     gold: "Yellow Gold",
     description: "Pear Shape Pendant",
-    category: "necklaces",
+    category: "necklaces"
+,
     price: 2000,
   },
   {
@@ -64,7 +74,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00075N.RD-1-21.jpg",
     gold: "White Gold",
     description: "Classic Solitaire Pendant",
-    category: "necklaces",
+    category: "necklaces"
+,
     price: 1400,
   },
   {
@@ -72,7 +83,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00075N.RD-1-22.jpg",
     gold: "Yellow Gold",
     description: "Classic Solitaire Pendant",
-    category: "necklaces",
+    category: "necklaces"
+,
     price: 1400,
   },
   {
@@ -80,7 +92,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00087A.RD-5.5-21.jpg",
     gold: "White Gold",
     description: "Tennis Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 4350,
   },
   {
@@ -88,7 +101,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00223B.EM-7.5-21.jpg",
     gold: "White Gold",
     description: "Emerald Tennis Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 6000,
   },
   {
@@ -96,7 +110,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00223B.OV-7-21.jpg",
     gold: "White Gold",
     description: "Oval Tennis Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 4800,
   },
   {
@@ -104,7 +119,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00316B.RD-10-21.jpg",
     gold: "White Gold",
     description: "Round Tennis Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 6500,
   },
   {
@@ -112,7 +128,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00316B.RD-10-22.jpg",
     gold: "Yellow Gold",
     description: "Round Tennis Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 6500,
   },
   {
@@ -120,7 +137,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00320B.EM-10-22.jpg",
     gold: "Yellow Gold",
     description: "Emerald Tennis Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 6500,
   },
   {
@@ -128,7 +146,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00320B.EM-12-22.jpg",
     gold: "Yellow Gold",
     description: "Emerald Tennis Bracelet Large",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 9100,
   },
   {
@@ -136,7 +155,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00320B.RD-3-21.jpg",
     gold: "White Gold",
     description: "Round Tennis Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 3440,
   },
   {
@@ -144,7 +164,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00320B.RD-3-22.jpg",
     gold: "Yellow Gold",
     description: "Round Tennis Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 3440,
   },
   {
@@ -152,7 +173,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00368B.PS-8-21.jpg",
     gold: "White Gold",
     description: "Pear Shape Tennis Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 5315,
   },
   {
@@ -160,7 +182,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00373B.MX-10.25-22.jpg",
     gold: "Yellow Gold",
     description: "Multi Shape Tennis Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 6500,
   },
   {
@@ -168,7 +191,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00373B.MX-7.5-21.jpg",
     gold: "White Gold",
     description: "Multi Shape Tennis Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 6000,
   },
   {
@@ -176,7 +200,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00375B.RD-13-21.jpg",
     gold: "White Gold",
     description: "Three Stone Diamond Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 9100,
   },
   {
@@ -184,7 +209,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ01348B.MX-4-22.jpg",
     gold: "Yellow Gold",
     description: "Multi Shape Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 3600,
   },
   {
@@ -192,7 +218,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ01349B.RD-1-21.jpg",
     gold: "White Gold",
     description: "Bolo Chain Diamond Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 2200,
   },
   {
@@ -200,7 +227,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ01349B.RD-1-22.jpg",
     gold: "Yellow Gold",
     description: "Bolo Chain Diamond Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 2200,
   },
   {
@@ -208,7 +236,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ01349B.RD-2-21.jpg",
     gold: "White Gold",
     description: "Bolo Chain Diamond Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 2775,
   },
   {
@@ -216,7 +245,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ01349B.RD-2-22.jpg",
     gold: "Yellow Gold",
     description: "Bolo Chain Diamond Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 2775,
   },
   {
@@ -224,7 +254,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ01477B.MQ-2-21.jpg",
     gold: "White Gold",
     description: "Marquise Bangle",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 3700,
   },
   {
@@ -232,7 +263,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ01477B.MQ-2-22.jpg",
     gold: "Yellow Gold",
     description: "Marquise Bangle",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 3700,
   },
   {
@@ -240,7 +272,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ01855B.EM-7-21.jpg",
     gold: "White Gold",
     description: "Emerald Tennis Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 6000,
   },
   {
@@ -248,7 +281,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ01855B.RD-11-21.jpg",
     gold: "White Gold",
     description: "Round Tennis Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 6500,
   },
   {
@@ -256,7 +290,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ01855B.RD-5-21.jpg",
     gold: "White Gold",
     description: "Round Tennis Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 4350,
   },
   {
@@ -264,7 +299,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ01855B.RD-6-22.jpg",
     gold: "Yellow Gold",
     description: "Round Tennis Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 4800,
   },
   {
@@ -272,7 +308,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ01990B.EM-5.25-21.jpg",
     gold: "White Gold",
     description: "Emerald Tennis Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 4800,
   },
   {
@@ -280,7 +317,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ01990B.OV-4.5-21.jpg",
     gold: "White Gold",
     description: "Oval Tennis Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 4300,
   },
   {
@@ -288,7 +326,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ01990B.OV-6-21.jpg",
     gold: "White Gold",
     description: "Oval Tennis Bracelet",
-    category: "bracelets",
+    category: "bracelets"
+,
     price: 4800,
   },
   {
@@ -296,7 +335,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00101P.MQ-1.5-21.jpg",
     gold: "White Gold",
     description: "Marquise Cross Pendant",
-    category: "necklaces",
+    category: "necklaces"
+,
     price: 1690,
   },
   {
@@ -304,21 +344,24 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00101P.MQ-1.5-22.jpg",
     gold: "Yellow Gold",
     description: "Marquise Cross Pendant",
-    category: "necklaces",
+    category: "necklaces"
+,
     price: 1690,
   },
   {
     name: "KJ00136E3.RD-1-21",
     link: "/assets/kira-black/KJ00136E3.RD-1-21.jpg",
     description: "Classic Studs",
-    category: "earrings",
+    category: "earrings"
+,
     price: 600,
   },
   {
     name: "KJ00151E.RD-1-21",
     link: "/assets/kira-black/KJ00151E.RD-1-21.jpg",
     description: "Halo Studs",
-    category: "earrings",
+    category: "earrings"
+,
     price: 875,
   },
   {
@@ -326,7 +369,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00173H.RD-3-21.jpg",
     gold: "White Gold",
     description: "Round Mini Hoops",
-    category: "earrings",
+    category: "earrings"
+,
     price: 2625,
   },
   {
@@ -334,7 +378,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00175H.EM-4-21.jpg",
     gold: "White Gold",
     description: "Emerald Hoops",
-    category: "earrings",
+    category: "earrings"
+,
     price: 3375,
   },
   {
@@ -342,7 +387,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00176H.OV-4-21.jpg",
     gold: "White Gold",
     description: "Oval Hoops",
-    category: "earrings",
+    category: "earrings"
+,
     price: 3500,
   },
   {
@@ -350,7 +396,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00178H.MQ-4-21.jpg",
     gold: "White Gold",
     description: "Marquise Hoops",
-    category: "earrings",
+    category: "earrings"
+,
     price: 3375,
   },
   {
@@ -358,7 +405,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00180H.OV-3-22.jpg",
     gold: "Yellow Gold",
     description: "Three Stone Oval Hoops",
-    category: "earrings",
+    category: "earrings"
+,
     price: 2850,
   },
   {
@@ -366,7 +414,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00197N.RD-10-21.jpg",
     gold: "White Gold",
     description: "Graduated Tennis Necklace",
-    category: "necklaces",
+    category: "necklaces"
+,
     price: 8125,
   },
   {
@@ -374,7 +423,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00197N.RD-7-21.jpg",
     gold: "White Gold",
     description: "Graduated Tennis Necklace",
-    category: "necklaces",
+    category: "necklaces"
+,
     price: 8700,
   },
   {
@@ -382,7 +432,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00197N.RD-7-22.jpg",
     gold: "Yellow Gold",
     description: "Graduated Tennis Necklace",
-    category: "necklaces",
+    category: "necklaces"
+,
     price: 8700,
   },
   {
@@ -390,7 +441,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00199H.RD-2-22.jpg",
     gold: "Yellow Gold",
     description: "Three Stone Round Hoops",
-    category: "earrings",
+    category: "earrings"
+,
     price: 2000,
   },
   {
@@ -398,7 +450,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00200H.RD-3-22.jpg",
     gold: "Yellow Gold",
     description: "Classic Round Hoops",
-    category: "earrings",
+    category: "earrings"
+,
     price: 2625,
   },
   {
@@ -406,7 +459,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00200H.RD-7-21.jpg",
     gold: "White Gold",
     description: "Large Round Hoops",
-    category: "earrings",
+    category: "earrings"
+,
     price: 6200,
   },
   {
@@ -414,7 +468,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00749R.RD-2-21.jpg",
     gold: "White Gold",
     description: "Round Solitaire Ring",
-    category: "rings",
+    category: "rings"
+,
     price: 2035,
   },
   {
@@ -422,14 +477,16 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00755R.RD-1.5-22.jpg",
     gold: "Yellow Gold",
     description: "Round Solitaire Ring",
-    category: "rings",
+    category: "rings"
+,
     price: 2035,
   },
   {
     name: "KJ00830R.RD-1.5-22",
     link: "/assets/kira-black/KJ00830R.RD-1.5-22.jpg",
     description: "Round Pave Engagement Ring",
-    category: "rings",
+    category: "rings"
+,
     price: 2035,
   },
   {
@@ -437,14 +494,16 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ00998R.CE-2-21.jpg",
     gold: "White Gold",
     description: "Cushion Halo Ring",
-    category: "rings",
+    category: "rings"
+,
     price: 2750,
   },
   {
     name: "KJ01028R.RD-2-21",
     link: "/assets/kira-black/KJ01028R.RD-2-21.jpg",
     description: "Round Halo Engagement Ring",
-    category: "rings",
+    category: "rings"
+,
     price: 2035,
   },
   {
@@ -452,7 +511,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ01032R.OV-2-22.jpg",
     gold: "Yellow Gold",
     description: "Oval Halo Ring",
-    category: "rings",
+    category: "rings"
+,
     price: 2750,
   },
   {
@@ -460,7 +520,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ01064R.RD-MQ-3-21.jpg",
     gold: "White Gold",
     description: "Round Marquise Three Stone Ring",
-    category: "rings",
+    category: "rings"
+,
     price: 2035,
   },
   {
@@ -468,7 +529,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ01064R.RD-MQ-3-22.jpg",
     gold: "Yellow Gold",
     description: "Round Marquise Three Stone Ring",
-    category: "rings",
+    category: "rings"
+,
     price: 2035,
   },
   {
@@ -476,7 +538,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ01068R.RD-1-21.jpg",
     gold: "White Gold",
     description: "Round Half Band",
-    category: "rings",
+    category: "rings"
+,
     price: 1500,
   },
   {
@@ -484,7 +547,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ01068R.RD-1-22F.jpg",
     gold: "Yellow Gold",
     description: "Round Half Band",
-    category: "rings",
+    category: "rings"
+,
     price: 1500,
   },
   {
@@ -492,7 +556,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ01088R.OV-1-22.jpg",
     gold: "Yellow Gold",
     description: "Oval Solitaire Ring",
-    category: "rings",
+    category: "rings"
+,
     price: 1500,
   },
   {
@@ -500,7 +565,8 @@ export const kiraProducts = [
     link: "/assets/kira-black/KJ01454R.PS-2-21.jpg",
     gold: "White Gold",
     description: "Pear Shape Solitaire Ring",
-    category: "rings",
+    category: "rings"
+,
     price: 2750,
   },
   // ── Opal Grand inventory (imported from spreadsheet) ──
@@ -1008,3 +1074,11 @@ export const kiraProducts = [
     price: 2315,
   }
 ];
+
+// Attach Kira's white-background multi-angle photos where Kira has them.
+// `link` is deliberately left alone: the newsletter builder and older scripts
+// still read it (the black-background versions). Cards and the product modal
+// prefer `gallery` when present.
+export const kiraProducts = rawKiraProducts.map((p) =>
+  kiraGallery[p.name] ? { ...p, gallery: kiraGallery[p.name] } : p
+);

@@ -5949,3 +5949,72 @@ a:hover { color: var(--accent); }
 @media (max-width: 720px) {
   .hp-locations .locations-grid { grid-template-columns: 1fr; }
 }
+
+/* ==========================================================================
+   Kira studio photos (2026-11): white-background, multi-angle product shots.
+   Applies only to cards/modals whose product has a `gallery`.
+   ========================================================================== */
+.inventory-card--studio .card__media { background: #fff; position: relative; }
+.card__media--swap .card__media-alt {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  pointer-events: none;
+}
+.category-page .inventory-card .card__media .card__media-alt {
+  object-fit: contain;
+  padding: 8px;
+}
+@media (hover: hover) {
+  .card__media--swap:hover .card__media-alt { opacity: 1; }
+}
+
+.product-modal__image--studio { background: #fff; }
+
+.product-modal__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--text);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 0 0 2px;
+}
+.product-modal__nav:hover { background: #fff; border-color: var(--accent); }
+.product-modal__nav:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.product-modal__nav--prev { left: 10px; }
+.product-modal__nav--next { right: 10px; }
+
+.product-modal__thumbs {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding-bottom: 2px;
+}
+.product-modal__thumb {
+  flex: 0 0 64px;
+  height: 64px;
+  padding: 0;
+  border: 1px solid var(--border);
+  background: #fff;
+  cursor: pointer;
+  scroll-snap-align: start;
+  opacity: 0.7;
+  transition: opacity 0.2s ease, border-color 0.2s ease;
+}
+.product-modal__thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.product-modal__thumb:hover { opacity: 1; }
+.product-modal__thumb.is-active { opacity: 1; border-color: var(--accent); }
+.product-modal__thumb:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }

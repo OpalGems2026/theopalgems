@@ -26,7 +26,7 @@ const productItems = kiraProducts.map((p) => ({
   name: p.description || p.name,
   sku: p.name,
   category: p.category,
-  image: p.link,
+  image: p.gallery?.[0] || p.link,
   price: null,
   brand: null,
   href: categoryLinks[p.category] || '/category/' + p.category,
