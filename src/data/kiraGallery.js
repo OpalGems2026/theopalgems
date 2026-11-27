@@ -68,3 +68,17 @@ export const kiraGallery = {
   "KJ01990B.OV-4.5-21": ["/assets/kira-gallery/KJ01990B_OV-4_5-21_1.jpg", "/assets/kira-gallery/KJ01990B_OV-4_5-21_2.jpg", "/assets/kira-gallery/KJ01990B_OV-4_5-21_3.jpg", "/assets/kira-gallery/KJ01990B_OV-4_5-21_4.jpg"],
   "KJ01990B.OV-6-21": ["/assets/kira-gallery/KJ01990B_OV-6-21_1.jpg", "/assets/kira-gallery/KJ01990B_OV-6-21_2.jpg", "/assets/kira-gallery/KJ01990B_OV-6-21_3.jpg", "/assets/kira-gallery/KJ01990B_OV-6-21_4.jpg"],
 };
+
+// Kira's 360-degree turntable videos (SKU.mp4 on the same server), re-encoded to
+// 720px / no audio. Shown through the existing '360° View' toggle in the product modal.
+export const kiraSpin = {
+  "KJ00066P.RD-1-21": "/assets/kira-spin/KJ00066P_RD-1-21.mp4",
+  "KJ00151E.RD-1-21": "/assets/kira-spin/KJ00151E_RD-1-21.mp4",
+  "KJ00173H.RD-3-21": "/assets/kira-spin/KJ00173H_RD-3-21.mp4",
+  "KJ00175H.EM-4-21": "/assets/kira-spin/KJ00175H_EM-4-21.mp4",
+  "KJ00180H.OV-3-22": "/assets/kira-spin/KJ00180H_OV-3-22.mp4",
+};
+
+// 1800px copies for zooming, loaded only when someone zooms in.
+export const zoomSrcFor = (src) =>
+  src && src.startsWith('/assets/kira-gallery/') ? src.replace('/assets/kira-gallery/', '/assets/kira-gallery/zoom/') : null;

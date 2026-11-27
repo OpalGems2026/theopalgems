@@ -6018,3 +6018,6 @@ a:hover { color: var(--accent); }
 .product-modal__thumb:hover { opacity: 1; }
 .product-modal__thumb.is-active { opacity: 1; border-color: var(--accent); }
 .product-modal__thumb:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Kira photos load an 1800px copy when zoomed, so they can take a deeper zoom. */
+.product-modal__image--studio .product-modal__zoomimg.is-zoomed { transform: scale(2.6); }

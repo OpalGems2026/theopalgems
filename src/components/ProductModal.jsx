@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import SpinViewer from './SpinViewer';
 import { formatPrice } from '../lib/formatPrice';
+import { zoomSrcFor } from '../data/kiraGallery';
 
 export const WHATSAPP_NUMBER = '+15612519560';
 
@@ -93,6 +94,14 @@ export function ProductModal({ product, onClose }) {
   const photos = productPhotos(product);
   const count = photos.length;
   const go = (delta) => { setZoomed(false); setShot((i) => (i + delta + count) % count); };
+  // Kira photos have an 1800px copy for zooming. Warm it up as soon as a photo is
+  // shown, so clicking to zoom swaps straight to the sharp version.
+  const zoomSrc = zoomSrcFor(photos[shot]);
+  useEffect(() => {
+    if (!zoomSrc) return;
+    const pre = new Image();
+    pre.src = zoomSrc;
+  }, [zoomSrc]);
 
   useEffect(() => {
     const handleKey = (e) => {
@@ -145,7 +154,7 @@ export function ProductModal({ product, onClose }) {
               ) : (
                 <img
                   key={photos[shot]}
-                  src={photos[shot] || FALLBACK_IMG}
+                  src={(zoomed && zoomSrc) || photos[shot] || FALLBACK_IMG}
                   alt={`${product.description || product.name}${count > 1 ? ` — view ${shot + 1} of ${count}` : ''}`}
                   className={`product-modal__zoomimg${zoomed ? ' is-zoomed' : ''}`}
                   style={{ cursor: zoomed ? 'zoom-out' : 'zoom-in' }}

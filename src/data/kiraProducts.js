@@ -1,4 +1,4 @@
-import { kiraGallery } from './kiraGallery.js';
+import { kiraGallery, kiraSpin } from './kiraGallery.js';
 
 const rawKiraProducts = [
   {
@@ -1079,6 +1079,9 @@ const rawKiraProducts = [
 // `link` is deliberately left alone: the newsletter builder and older scripts
 // still read it (the black-background versions). Cards and the product modal
 // prefer `gallery` when present.
-export const kiraProducts = rawKiraProducts.map((p) =>
-  kiraGallery[p.name] ? { ...p, gallery: kiraGallery[p.name] } : p
-);
+export const kiraProducts = rawKiraProducts.map((p) => {
+  const extra = {};
+  if (kiraGallery[p.name]) extra.gallery = kiraGallery[p.name];
+  if (kiraSpin[p.name] && !p.spin) extra.spin = kiraSpin[p.name]; // never overwrite an existing spin
+  return Object.keys(extra).length ? { ...p, ...extra } : p;
+});
