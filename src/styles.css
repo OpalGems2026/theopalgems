@@ -5629,7 +5629,12 @@ a:hover { color: var(--accent); }
 .hp-display {
   font-family: var(--hp-display);
   font-style: italic;
-  font-weight: 400;
+  font-weight: 500;
+  /* Bodoni Moda's optical-size axis would otherwise follow the font size and
+     thin its hairlines to near-invisible at headline sizes (unreadable on the
+     hero). Pin it to the small-text cut, which keeps the strokes solid. */
+  font-optical-sizing: none;
+  font-variation-settings: 'opsz' 11;
   text-transform: uppercase;
   letter-spacing: 0.01em;
   line-height: 1.12;
