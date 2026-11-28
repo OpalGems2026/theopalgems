@@ -4,6 +4,10 @@
 // Keyed by the exact `name` (SKU) used in kiraProducts.js.
 // KJ00373B.MX-10.25-22 has no images on Kira, so it is absent and keeps its old photo.
 export const kiraGallery = {
+  // In-store pieces Andrew confirmed (2026-11-28) are this Kira design. Kira studio photos first,
+  // then the piece's own photo on the display bust, kept last so the real item is still shown.
+  "114079": ["/assets/kira-gallery/114079_kira_1.jpg", "/assets/kira-gallery/114079_kira_2.jpg", "/assets/kira-gallery/114079_kira_3.jpg", "/assets/kira-gallery/114079_kira_4.jpg", "/assets/inventory/114079.jpg"], // = KJ01253P.MQ-2-21
+  "114141": ["/assets/kira-gallery/114141_kira_1.jpg", "/assets/kira-gallery/114141_kira_2.jpg", "/assets/kira-gallery/114141_kira_3.jpg", "/assets/kira-gallery/114141_kira_4.jpg", "/assets/inventory/114141.jpg"], // = KJ00054E.RD-2-21
   "KJ00061P.MX-3-21": ["/assets/kira-gallery/KJ00061P_MX-3-21_1.jpg", "/assets/kira-gallery/KJ00061P_MX-3-21_2.jpg", "/assets/kira-gallery/KJ00061P_MX-3-21_3.jpg", "/assets/kira-gallery/KJ00061P_MX-3-21_4.jpg"],
   "KJ00066P.RD-1-21": ["/assets/kira-gallery/KJ00066P_RD-1-21_1.jpg", "/assets/kira-gallery/KJ00066P_RD-1-21_2.jpg", "/assets/kira-gallery/KJ00066P_RD-1-21_3.jpg", "/assets/kira-gallery/KJ00066P_RD-1-21_4.jpg"],
   "KJ00075N.CE-1-21": ["/assets/kira-gallery/KJ00075N_CE-1-21_1.jpg", "/assets/kira-gallery/KJ00075N_CE-1-21_2.jpg", "/assets/kira-gallery/KJ00075N_CE-1-21_3.jpg", "/assets/kira-gallery/KJ00075N_CE-1-21_4.jpg"],
